@@ -12,9 +12,9 @@ class AbstractFile(TimeStampedModel):
         abstract = True
 
 
-class Picture(AbstractFile, TimeStampedModel):
+class Picture(AbstractFile):
     pass
 
 
-class File(AbstractFile, TimeStampedModel):
+class File(AbstractFile):
     pass

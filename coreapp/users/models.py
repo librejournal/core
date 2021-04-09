@@ -7,7 +7,7 @@ from model_utils.models import TimeStampedModel
 class User(AbstractUser, TimeStampedModel):
     # ForeignKey to self...
     # enum CharField( READER / WRITER )
-    type = models.CharField()
+    type = models.CharField(max_length=50)
     followed_locations = models.ManyToManyField(
         "stories.StoryLocations",
     )
@@ -22,7 +22,7 @@ class UserVerification(TimeStampedModel):
 
 
 class UserReferrals(TimeStampedModel):
-    token = models.CharField()
+    token = models.CharField(max_length=200)
     referred_by = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="referrals"
     )
