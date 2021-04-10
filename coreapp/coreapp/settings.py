@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
 
-    "files",
-    "monetisation",
-    "stories",
-    "users",
+    "coreapp.files",
+    "coreapp.monetisation",
+    "coreapp.stories",
+    "coreapp.users",
 ]
 
 MIDDLEWARE = [
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "coreapp.urls"
+ROOT_URLCONF = "coreapp.coreapp.urls"
 
 TEMPLATES = [
     {

@@ -1,0 +1,27 @@
+FROM python:3.8
+
+RUN apt-get -y update && apt-get --no-install-recommends install -y \
+    build-essential \
+    gettext \
+    git \
+    libssl-dev \
+    openssh-client \
+    postgresql-client \
+    python-dev \
+    zlib1g-dev
+
+
+RUN mkdir -p /usr/src/librejournal
+WORKDIR /usr/src/librejournal
+
+COPY requirements/ requirements/
+
+RUN pip install --exists-action w -r requirements/requirements.txt
+
+COPY . ./
+
+# entrypoint script waits for postgres database to be up, before starting and run tests
+ENTRYPOINT ["./entrypoint.sh"]
+
+# executing script that starts django app
+CMD ["./start.sh"]
