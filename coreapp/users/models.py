@@ -7,6 +7,7 @@ from model_utils.models import TimeStampedModel
 class User(AbstractUser, TimeStampedModel):
     # ForeignKey to self...
     # enum CharField( READER / WRITER )
+    uuid = models.UUIDField(unique=True)
     type = models.CharField(max_length=50)
     followed_locations = models.ManyToManyField(
         "stories.StoryLocations",

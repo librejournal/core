@@ -40,6 +40,9 @@ INSTALLED_APPS = [
 
     "django_extensions",
 
+    "rest_framework",
+    "rest_framework.authtoken",
+
     "files",
     "monetisation",
     "stories",
@@ -137,3 +140,10 @@ GRAPH_MODELS = {
 }
 
 AUTH_USER_MODEL = "users.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
