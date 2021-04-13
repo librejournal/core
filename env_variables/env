@@ -1,0 +1,5 @@
+DB_NAME=librejournal
+DB_USERNAME=librejournal
+DB_PASSWORD=librejournalDB2021
+DB_HOSTNAME=core_db
+DB_PORT=5432

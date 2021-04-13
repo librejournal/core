@@ -23,5 +23,8 @@ COPY . ./
 # entrypoint script waits for postgres database to be up, before starting and run tests
 ENTRYPOINT ["./entrypoint.sh"]
 
+RUN echo Starting with start.Unix.sh
+
 # executing script that starts django app
-CMD ["./start.sh"]
+#CMD ["./start.Unix.sh"]
+CMD ["echo", "Hello Wordl"]

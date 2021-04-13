@@ -5,4 +5,6 @@ set -o pipefail
 set -o nounset
 set -o xtrace
 
+python manage.py migrate
+
 gunicorn coreapp.coreapp.wsgi
