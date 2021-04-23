@@ -14,6 +14,8 @@ import os
 
 from pathlib import Path
 
+ENV = os.environ.get("ENV", "local")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -93,7 +95,7 @@ DATABASES = {
 }
 
 # For local database only
-DATABASES["default"] = {
+DATABASES["_default_postgresql"] = {
     "ENGINE": "django.db.backends.postgresql",
     "NAME": os.environ["DB_NAME"],
     "USER": os.environ["DB_USERNAME"],
@@ -101,6 +103,9 @@ DATABASES["default"] = {
     "HOST": os.environ["DB_HOSTNAME"],
     "PORT": os.environ["DB_PORT"],
 }
+
+if ENV == "local":
+    DATABASES["default"] = DATABASES["_default_postgresql"]
 
 
 # Password validation
@@ -159,3 +164,16 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ]
 }
+
+EMAIL_HOST = "smtp.sendgrid.net"
+EMAIL_HOST_USER = "apikey"
+EMAIL_HOST_PASSWORD = ''
+    # os.environ["SENDGRID_API_KEY"]
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Europe/Istanbul"

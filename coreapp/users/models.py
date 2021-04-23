@@ -8,12 +8,17 @@ class User(AbstractUser, TimeStampedModel):
     # ForeignKey to self...
     # enum CharField( READER / WRITER )
     uuid = models.UUIDField(unique=True)
+
+
+class Profile(TimeStampedModel):
+    uuid = models.UUIDField(unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     type = models.CharField(max_length=50)
     followed_locations = models.ManyToManyField(
         "stories.StoryLocations",
+        related_name="followed_by",
     )
-    followed_authors = models.ManyToManyField("users.User")
-
+    followed_authors = models.ManyToManyField("self", related_name="followed_by")
 
 class UserVerification(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
