@@ -2,7 +2,10 @@ from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.base_user import BaseUserManager
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.models import Token
+
+from coreapp.users.models import TOKEN_TYPE_CHOICES, UserVerification, Profile, UserStatisticts
 
 User = get_user_model()
 
@@ -16,6 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
+            "email",
             "is_active",
             "is_staff",
         ]
@@ -79,7 +83,36 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        # Create user
         user = User(**validated_data)
         user.set_password(validated_data["password"])
         user.save()
+        user.refresh_from_db()
+
+        # Create verification
+        UserVerification.objects.get_or_create(user=user)
+
+        # Create a profile as reader
+        Profile.objects.get_or_create(user=user)
+
+        # Create user statistics object
+        UserStatisticts.objects.get_or_create(user=user)
+
         return user
+
+
+class VerificationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    type = serializers.ChoiceField(choices=TOKEN_TYPE_CHOICES)
+
+    def validate(self, attrs):
+        email = attrs['email']
+        user = User.objects.filter(email=email).first()
+        if not user:
+            raise ValidationError("User with email does not exist.")
+        attrs['user'] = user
+        return attrs
+
+    def create(self, validated_data):
+        user = validated_data['user']
+        return user.get_or_create_verification_token(validated_data['type'])

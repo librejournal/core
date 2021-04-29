@@ -1,3 +1,4 @@
+ENV=docker_local
 DB_NAME=librejournal
 DB_USERNAME=librejournal
 DB_PASSWORD=librejournalDB2021

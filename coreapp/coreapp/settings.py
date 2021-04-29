@@ -11,8 +11,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+import logging
 
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 ENV = os.environ.get("ENV", "local")
 
@@ -61,6 +64,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "coreapp.utils.global_request.RequestMiddleware",
 ]
 
 ROOT_URLCONF = "coreapp.coreapp.urls"
@@ -95,16 +99,19 @@ DATABASES = {
 }
 
 # For local database only
-DATABASES["_default_postgresql"] = {
-    "ENGINE": "django.db.backends.postgresql",
-    "NAME": os.environ["DB_NAME"],
-    "USER": os.environ["DB_USERNAME"],
-    "PASSWORD": os.environ["DB_PASSWORD"],
-    "HOST": os.environ["DB_HOSTNAME"],
-    "PORT": os.environ["DB_PORT"],
-}
+try:
+    DATABASES["_default_postgresql"] = {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ["DB_NAME"],
+        "USER": os.environ["DB_USERNAME"],
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "HOST": os.environ["DB_HOSTNAME"],
+        "PORT": os.environ["DB_PORT"],
+    }
+except KeyError:
+    logger.info("Env variables not set...")
 
-if ENV == "local":
+if ENV == "docker_local":
     DATABASES["default"] = DATABASES["_default_postgresql"]
 
 
@@ -177,3 +184,6 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Europe/Istanbul"
+
+ENABLE_EMAILS = bool(os.environ.get("ENABLE_EMAILS", False))
+ENABLE_SMS = bool(os.environ.get("ENABLE_SMS", False))
