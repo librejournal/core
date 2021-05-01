@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if not is_local_env():
             return
-        user = User.objects.get_or_create(username="superuser")
+        user, _ = User.objects.get_or_create(username="superuser")
         user.set_password("123123")
         user.is_staff = True
         user.is_superuser = True

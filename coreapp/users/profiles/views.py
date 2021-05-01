@@ -2,9 +2,11 @@ from django.core.exceptions import ImproperlyConfigured
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from coreapp.users.models import Profile
 from coreapp.users.profiles.serializers import ProfileSerializer, FollowUnfollowSerializer
 from coreapp.utils.serializers import EmptySerializer
 
@@ -28,19 +30,35 @@ class ProfileView(viewsets.GenericViewSet):
             return self.serializer_classes[self.action]
         return super().get_serializer_class()
 
+    def _profile_response_with_pk(self, profile_pk):
+        profile = get_object_or_404(Profile, pk=profile_pk)
+        serializer = self.get_serializer(profile)
+        serializer.is_valid(raise_exception=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        methods=[
+            "GET",
+        ],
+        detail=True,
+        url_path="profile",
+        url_name="profile-detail-with-pk",
+    )
+    def profile_with_pk(self, request, *args, **kwargs):
+        profile_pk = kwargs.get("pk")
+        return self._profile_response_with_pk(profile_pk)
+
     @action(
         methods=[
             "GET",
         ],
         detail=False,
+        url_path="profile",
+        url_name="profile-detail",
     )
-    def profile(self, request):
-        profile = getattr(request.user, "profile", None)
-        if not profile:
-            raise NotFound("Profile not found.")
-        serializer = self.get_serializer(profile)
-        serializer.is_valid(raise_exception=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    def profile_from_request_user(self, request, *args, **kwargs):
+        profile_pk = getattr(getattr(request.user, "profile", None), "id", None)
+        return self._profile_response_with_pk(profile_pk)
 
     @action(
         methods=[

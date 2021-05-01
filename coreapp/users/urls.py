@@ -3,6 +3,7 @@ from django.urls import path
 from rest_framework import routers
 
 from coreapp.users.views import AuthViewSet, LoggedInUserViewSet, VerificationView
+from coreapp.users.profiles.urls import urlpatterns as profile_urlpatterns
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register("api/auth", AuthViewSet, basename="auth")
@@ -14,4 +15,4 @@ logged_in_urls = [
     path("api/auth/verification", VerificationView.as_view(), name="api-rest-verification-view"),
 ]
 
-urlpatterns = router.urls + logged_in_urls
+urlpatterns = router.urls + logged_in_urls + profile_urlpatterns

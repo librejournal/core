@@ -9,13 +9,21 @@ from coreapp.users.models import TOKEN_TYPE_CHOICES, UserVerification, Profile, 
 
 User = get_user_model()
 
+class TinyUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "uuid",
+            "username",
+        ]
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
             "id",
             "uuid",
-            "type",
             "username",
             "first_name",
             "last_name",
