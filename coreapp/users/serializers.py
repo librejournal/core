@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.base_user import BaseUserManager
+from django.db import transaction
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -90,6 +91,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         password_validation.validate_password(value)
         return value
 
+    @transaction.atomic
     def create(self, validated_data):
         # Create user
         user = User(**validated_data)

@@ -126,5 +126,5 @@ class UserReferrals(TimeStampedModel):
 
 class UserStatisticts(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    reputation = models.IntegerField()
-    number_of_posts = models.IntegerField()
+    reputation = models.IntegerField(null=True, blank=True)
+    number_of_posts = models.IntegerField(null=True, blank=True)
