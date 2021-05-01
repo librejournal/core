@@ -9,7 +9,7 @@ User = get_user_model()
 
 # Create your models here.
 class Story(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4(), unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     author = models.ForeignKey("users.Profile", on_delete=models.CASCADE, related_name="stories")
     tags = models.ManyToManyField("stories.StoryTags")
     locations = models.ManyToManyField("stories.StoryLocations")
@@ -18,7 +18,7 @@ class Story(TimeStampedModel):
 
 
 class StoryComponent(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4(), unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     story = models.ForeignKey(
         Story, on_delete=models.CASCADE, related_name="components"
     )
@@ -26,7 +26,7 @@ class StoryComponent(TimeStampedModel):
 
 
 class StoryComponentPictures(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4(), unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     story_component = models.ForeignKey(
         "stories.StoryComponent", on_delete=models.CASCADE, related_name="pictures"
     )
@@ -36,7 +36,7 @@ class StoryComponentPictures(TimeStampedModel):
 
 
 class StoryComponentFiles(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4(), unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     story_component = models.ForeignKey(
         "stories.StoryComponent", on_delete=models.CASCADE, related_name="files"
     )
@@ -46,13 +46,13 @@ class StoryComponentFiles(TimeStampedModel):
 
 
 class StoryTags(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4(), unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     tag = models.CharField(max_length=50)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tags")
 
 
 class StoryLocations(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4(), unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     country = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
     province_1 = models.CharField(max_length=50, null=True, blank=True)
@@ -60,7 +60,7 @@ class StoryLocations(TimeStampedModel):
 
 
 class Comment(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4(), unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="comments")
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     # Sanitize HTML when saving
