@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
 
+    "corsheaders",
+
     "coreapp.files",
     "coreapp.monetisation",
     "coreapp.stories",
@@ -59,6 +61,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -187,3 +190,8 @@ CELERY_TIMEZONE = "Europe/Istanbul"
 
 ENABLE_EMAILS = bool(os.environ.get("ENABLE_EMAILS", False))
 ENABLE_SMS = bool(os.environ.get("ENABLE_SMS", False))
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
