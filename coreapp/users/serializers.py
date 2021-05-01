@@ -38,13 +38,19 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=300, required=True)
     password = serializers.CharField(required=True, write_only=True)
 
+    def validate(self, attrs):
+        user_verification = UserVerification.objects.filter(user__email=attrs['email']).first()
+        if not user_verification or not user_verification.is_verified:
+            raise ValidationError("User is not yet verified")
+        return attrs
+
 
 class AuthUserSerializer(UserSerializer):
     token = serializers.SerializerMethodField()
 
     def get_token(self, obj):
         token = None
-        if obj.is_email_verified:
+        if obj.is_verified:
             token, _ = Token.objects.get_or_create(user=obj)
         return getattr(token, "key")
 

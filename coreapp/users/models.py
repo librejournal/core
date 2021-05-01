@@ -34,6 +34,10 @@ class User(AbstractUser, TimeStampedModel):
     # enum CharField( READER / WRITER )
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
 
+    @property
+    def is_verified(self):
+        return getattr(getattr(self, "userverification", None), "is_verified", False)
+
     def get_or_create_verification_token(self, type):
         verif_token = self.generic_tokens.filter(
             type=type,

@@ -59,9 +59,6 @@ class AuthViewSet(viewsets.GenericViewSet):
         "login": serializers.LoginSerializer,
         "register": serializers.UserRegisterSerializer,
     }
-    extra_permission_classes = {
-        "login": [IsUserVerified]
-    }
 
     @action(
         methods=[
@@ -111,9 +108,3 @@ class AuthViewSet(viewsets.GenericViewSet):
         if self.action in self.serializer_classes.keys():
             return self.serializer_classes[self.action]
         return super().get_serializer_class()
-
-    def get_permissions(self):
-        permission_classes = self.permission_classes
-        if self.action in self.extra_permission_classes:
-            permission_classes += self.extra_permission_classes[self.action]
-        return [permission() for permission in permission_classes]
