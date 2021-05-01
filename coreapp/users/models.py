@@ -87,7 +87,7 @@ class Profile(TimeStampedModel):
 
 class UserVerification(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email_verified = models.DateTimeField()
+    email_verified = models.DateTimeField(null=True, blank=True)
     # SMS verif?
     sms_verified = models.DateTimeField(null=True, blank=True)
 
