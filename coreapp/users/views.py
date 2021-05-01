@@ -19,6 +19,7 @@ from coreapp.utils.serializers import EmptySerializer
 class LoggedInUserViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAuthenticated,
+        IsUserVerified,
     ]
     serializer_class = serializers.UserSerializer
 
