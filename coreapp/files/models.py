@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 from model_utils.models import TimeStampedModel
@@ -6,7 +8,7 @@ from model_utils.models import TimeStampedModel
 
 
 class AbstractFile(TimeStampedModel):
-    attachment_uuid = models.UUIDField()
+    attachment_uuid = models.UUIDField(unique=True, default=uuid.uuid4)
 
     class Meta:
         abstract = True

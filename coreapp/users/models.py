@@ -76,7 +76,7 @@ class GenericToken(TimeStampedModel):
 
 
 class Profile(TimeStampedModel):
-    uuid = models.UUIDField(unique=True)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     type = models.CharField(max_length=50, choices=PROFILE_TYPE_CHOICES, default=PROFILE_TYPE_CHOICES.READER)
     followed_locations = models.ManyToManyField(
