@@ -61,7 +61,9 @@ class AuthViewSet(viewsets.GenericViewSet):
         "register": serializers.UserRegisterSerializer,
     }
     permission_classes_override = {
-        "logout": IsAuthenticated
+        "logout": [
+            IsAuthenticated,
+        ]
     }
 
     @action(
