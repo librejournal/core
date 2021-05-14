@@ -41,7 +41,7 @@ class ProfileView(viewsets.GenericViewSet):
             "GET",
         ],
         detail=True,
-        url_path="profile",
+        url_path="detail",
         url_name="profile-detail-with-pk",
     )
     def profile_with_pk(self, request, *args, **kwargs):
@@ -53,11 +53,19 @@ class ProfileView(viewsets.GenericViewSet):
             "GET",
         ],
         detail=False,
-        url_path="profile",
+        url_path="self-detail",
         url_name="profile-detail",
     )
     def profile_from_request_user(self, request, *args, **kwargs):
-        profile_pk = getattr(getattr(request.user, "profile", None), "id", None)
+        profile_pk = getattr(
+            getattr(
+                request.user,
+                "profile",
+                None,
+            ),
+            "id",
+            None,
+        )
         return self._profile_response_with_pk(profile_pk)
 
     @action(
@@ -66,7 +74,7 @@ class ProfileView(viewsets.GenericViewSet):
         ],
         detail=False,
     )
-    def follow(self, request):
+    def follow(self, request, *args, **kwargs):
         profile = getattr(request.user, "profile", None)
         if not profile:
             raise NotFound("Profile not found.")
@@ -81,7 +89,7 @@ class ProfileView(viewsets.GenericViewSet):
         ],
         detail=False,
     )
-    def unfollow(self, request):
+    def unfollow(self, request, *args, **kwargs):
         profile = getattr(request.user, "profile", None)
         if not profile:
             raise NotFound("Profile not found.")

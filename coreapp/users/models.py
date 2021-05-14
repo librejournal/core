@@ -34,6 +34,21 @@ class User(AbstractUser, TimeStampedModel):
     # enum CharField( READER / WRITER )
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
 
+    @classmethod
+    def get_system_user(cls):
+        obj, _ = cls.objects.get_or_create(
+            username="librejournal_system",
+            defaults={
+                "is_staff": True,
+                "first_name": "System",
+                "last_name": "System",
+                "email": "system@librejournal.codes",
+            }
+        )
+        obj.set_unusable_password()
+        obj.save()
+        return obj
+
     @property
     def is_verified(self):
         return getattr(getattr(self, "userverification", None), "is_verified", False)

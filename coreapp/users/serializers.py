@@ -11,20 +11,54 @@ from coreapp.users.models import TOKEN_TYPE_CHOICES, UserVerification, Profile, 
 User = get_user_model()
 
 class TinyUserSerializer(serializers.ModelSerializer):
+    profile_id = serializers.SerializerMethodField()
+
+    def get_profile_id(self, obj):
+        if isinstance(obj, dict):
+            return None
+        profile_id = getattr(
+            getattr(
+                obj,
+                "profile",
+                None,
+            ),
+            "id",
+            None,
+        )
+        return profile_id
+
     class Meta:
         model = User
         fields = [
             "id",
             "uuid",
+            "profile_id",
             "username",
         ]
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_id = serializers.SerializerMethodField()
+
+    def get_profile_id(self, obj):
+        if isinstance(obj, dict):
+            return None
+        profile_id = getattr(
+            getattr(
+                obj,
+                "profile",
+                None,
+            ),
+            "id",
+            None,
+        )
+        return profile_id
+
     class Meta:
         model = User
         fields = [
             "id",
             "uuid",
+            "profile_id",
             "username",
             "first_name",
             "last_name",

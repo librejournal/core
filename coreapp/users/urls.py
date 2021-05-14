@@ -2,11 +2,17 @@ from django.urls import path
 
 from rest_framework import routers
 
-from coreapp.users.views import AuthViewSet, LoggedInUserViewSet, VerificationView
+from coreapp.users.views import (
+    AuthViewSet,
+    LoggedInUserViewSet,
+    VerificationView,
+)
+from coreapp.users.profiles.views import ProfileView
 from coreapp.users.profiles.urls import urlpatterns as profile_urlpatterns
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register("api/auth", AuthViewSet, basename="auth")
+router.register("api/profile", ProfileView, basename="userprofile")
 
 logged_in_user_detail = LoggedInUserViewSet.as_view({"get": "retrieve"})
 

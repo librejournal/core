@@ -195,3 +195,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+# Accepts requests with this header as internal requests
+CORE_SERVICE_ACCESS_TOKEN = os.environ.get("CORE_SERVICE_ACCESS_TOKEN", None)
