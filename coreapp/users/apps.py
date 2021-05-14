@@ -31,7 +31,7 @@ class UsersConfig(AppConfig):
             user.set_unusable_password()
             user.save()
 
-            access_token = value['access_token']
+            access_token = value['access_token'] or Token.generate_key()
             try:
                 token = Token.objects.get(user_id=user.id)
             except Token.DoesNotExist:
