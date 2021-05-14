@@ -29,8 +29,21 @@ story_detail = views.StoryViewSet.as_view(
         "get": "retrieve",
         "patch": "partial_update",
         "put": "update",
+        "delete": "destroy",
     }
 )
+
+story_component_list_create = views.StoryComponentViewSet.as_view({
+    "post": "create",
+    "get": "list",
+})
+
+story_component_detail = views.StoryComponentViewSet.as_view({
+    "get": "retrieve",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy",
+})
 
 urlpatterns = [
     path(
@@ -40,7 +53,23 @@ urlpatterns = [
                 path("tags", story_tag_list_create, name="story-tag-list-create"),
                 path("locations", story_tag_list_create, name="story-tag-list-create"),
                 path("", story_list_create, name="story-list-create"),
-                path("<int:id>", story_detail, name="story-detail"),
+                path(
+                    "<int:story_id>",
+                    include(
+                        [
+                            path("", story_detail, name="story-detail"),
+                            path(
+                                "components",
+                                include(
+                                    [
+                                        path("", story_component_list_create, name="story-components-list-create"),
+                                        path("<int:id>", story_component_detail, name="story-component-detail"),
+                                    ]
+                                )
+                            ),
+                        ]
+                    )
+                ),
             ]
         ),
     )

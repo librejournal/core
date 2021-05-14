@@ -195,5 +195,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+from .settings_utils import SERVICE_CONSTANTS
 # Accepts requests with this header as internal requests
-CORE_SERVICE_ACCESS_TOKEN = os.environ.get("CORE_SERVICE_ACCESS_TOKEN", None)
+SERVICES = SERVICE_CONSTANTS

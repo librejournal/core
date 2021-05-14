@@ -1,11 +1,15 @@
+import logging
+
+from django.conf import settings
 from django.apps import AppConfig
 
+logger = logging.getLogger(__name__)
 
 class UsersConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "coreapp.users"
 
-    def ready(self):
+    def _create_system_user(self):
         from .models import User, Profile, PROFILE_TYPE_CHOICES
 
         user = User.get_system_user()
@@ -13,3 +17,29 @@ class UsersConfig(AppConfig):
             user=user,
             type=PROFILE_TYPE_CHOICES.WRITER,
         )
+
+    def _create_service_users_and_tokens(self):
+        from rest_framework.authtoken.models import Token
+        from .models import User
+
+        current_service = "core"
+        for key, value in settings.SERVICES.items():
+            if key == current_service or not key:
+                continue
+
+            user, _ = User.objects.get_or_create(username=key)
+            user.set_unusable_password()
+            user.save()
+
+            access_token = value['access_token']
+            try:
+                token = Token.objects.get(user_id=user.id)
+            except Token.DoesNotExist:
+                Token.objects.create(user_id=user.id, key=access_token)
+            else:
+                token = Token.objects.filter(user_id=user.id).update(key=access_token)
+
+
+    def ready(self):
+        self._create_system_user()
+        self._create_service_users_and_tokens()

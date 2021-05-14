@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from model_utils import Choices
 
 from model_utils.models import TimeStampedModel
 
@@ -57,33 +58,21 @@ class Story(TimeStampedModel):
 
 
 class StoryComponent(TimeStampedModel):
+    TYPE_CHOICES = Choices(
+        "TEXT",
+        "TITLE",
+        "IMAGE",
+    )
+
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     story = models.ForeignKey(
         Story, on_delete=models.CASCADE, related_name="components"
     )
     text = models.TextField()
-
-
-class StoryComponentPictures(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
-    story_component = models.ForeignKey(
-        "stories.StoryComponent", on_delete=models.CASCADE, related_name="pictures"
-    )
-    picture = models.ForeignKey(
-        "files.Picture",
-        on_delete=models.CASCADE,
-        related_name="related_picture_components",
-    )
-
-
-class StoryComponentFiles(TimeStampedModel):
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
-    story_component = models.ForeignKey(
-        "stories.StoryComponent", on_delete=models.CASCADE, related_name="files"
-    )
-    file = models.ForeignKey(
-        "files.File", on_delete=models.CASCADE, related_name="related_file_components"
-    )
+    # type = TEXT / TITLE / IMAGE - CharField(Enum)
+    type = models.CharField(max_length=100, choices=TYPE_CHOICES, db_index=True, null=True, blank=True)
+    # type_setting = CharField
+    type_setting = models.CharField(max_length=100, null=True, blank=True)
 
 
 class StoryTags(TimeStampedModel):

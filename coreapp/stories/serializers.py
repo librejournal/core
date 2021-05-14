@@ -89,3 +89,9 @@ class StorySerializer(serializers.ModelSerializer):
             return False
         request_user = getattr(get_current_request(), "user", None)
         return obj.can_user_dislike(request_user)
+
+
+class StoryComponentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.StoryComponent
+        fields = "__all__"
