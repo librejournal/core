@@ -9,18 +9,28 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('stories', '0005_auto_20210501_1502'),
+        ("stories", "0005_auto_20210501_1502"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='storylocations',
-            name='created_by',
-            field=models.ForeignKey(default=2, on_delete=django.db.models.deletion.CASCADE, related_name='locations', to=settings.AUTH_USER_MODEL),
+            model_name="storylocations",
+            name="created_by",
+            field=models.ForeignKey(
+                default=2,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="locations",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='storytags',
-            name='created_by',
-            field=models.ForeignKey(default=2, on_delete=django.db.models.deletion.CASCADE, related_name='tags', to=settings.AUTH_USER_MODEL),
+            model_name="storytags",
+            name="created_by",
+            field=models.ForeignKey(
+                default=2,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tags",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

@@ -2,6 +2,7 @@ import os
 
 from django.db.backends import postgresql
 
+
 def get_local_db_conf() -> dict:
     return {
         "ENGINE": "django.db.backends.postgresql",

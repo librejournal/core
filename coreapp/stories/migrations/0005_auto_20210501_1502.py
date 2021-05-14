@@ -7,43 +7,43 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0004_auto_20210429_1915'),
+        ("stories", "0004_auto_20210429_1915"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='comment',
-            name='uuid',
+            model_name="comment",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='story',
-            name='uuid',
+            model_name="story",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='storycomponent',
-            name='uuid',
+            model_name="storycomponent",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='storycomponentfiles',
-            name='uuid',
+            model_name="storycomponentfiles",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='storycomponentpictures',
-            name='uuid',
+            model_name="storycomponentpictures",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='storylocations',
-            name='uuid',
+            model_name="storylocations",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='storytags',
-            name='uuid',
+            model_name="storytags",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
     ]

@@ -11,15 +11,18 @@ from coreapp.utils.global_request import get_current_request
 
 User = get_user_model()
 
+
 def _get_current_user_or_system_user():
     user = getattr(get_current_request(), "user", None)
     if not user or not user.is_authenticated:
         return User.get_system_user()
     return user
 
+
 def _get_current_user_or_system_user_profile():
     user = _get_current_user_or_system_user()
     return getattr(user, "profile", None)
+
 
 class StoryTagsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,7 +31,7 @@ class StoryTagsSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         internal = super().to_internal_value(data)
-        internal['created_by'] = _get_current_user_or_system_user_profile()
+        internal["created_by"] = _get_current_user_or_system_user_profile()
         return internal
 
 
@@ -39,8 +42,9 @@ class StoryLocationSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
         internal = super().to_internal_value(data)
-        internal['created_by'] = _get_current_user_or_system_user_profile()
+        internal["created_by"] = _get_current_user_or_system_user_profile()
         return internal
+
 
 class StorySerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())

@@ -7,7 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from coreapp.users.models import Profile
-from coreapp.users.profiles.serializers import ProfileSerializer, FollowUnfollowSerializer
+from coreapp.users.profiles.serializers import (
+    ProfileSerializer,
+    FollowUnfollowSerializer,
+)
 from coreapp.utils.serializers import EmptySerializer
 
 

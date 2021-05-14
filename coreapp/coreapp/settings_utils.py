@@ -7,8 +7,8 @@ SERVICE_CONSTANTS = {
     },
     "core": {
         "url": os.environ.get("CORE_SERVICE_URL", ""),
-        "access_token": os.environ.get("CORE_SERVICE_ACCESS_TOKEN", "")
-    }
+        "access_token": os.environ.get("CORE_SERVICE_ACCESS_TOKEN", ""),
+    },
 }
 
 THIS_SERVICE_URL = SERVICE_CONSTANTS["core"]["url"]

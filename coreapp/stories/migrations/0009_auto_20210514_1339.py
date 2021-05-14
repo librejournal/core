@@ -7,34 +7,56 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0006_auto_20210501_1529'),
-        ('stories', '0008_auto_20210512_2027'),
+        ("users", "0006_auto_20210501_1529"),
+        ("stories", "0008_auto_20210512_2027"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='comment',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='users.profile'),
+            model_name="comment",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comments",
+                to="users.profile",
+            ),
         ),
         migrations.AlterField(
-            model_name='commentlikes',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_likes', to='users.profile'),
+            model_name="commentlikes",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="comment_likes",
+                to="users.profile",
+            ),
         ),
         migrations.AlterField(
-            model_name='storylikes',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='story_likes', to='users.profile'),
+            model_name="storylikes",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="story_likes",
+                to="users.profile",
+            ),
         ),
         migrations.AlterField(
-            model_name='storylocations',
-            name='created_by',
-            field=models.ForeignKey(default=2, on_delete=django.db.models.deletion.CASCADE, related_name='locations', to='users.profile'),
+            model_name="storylocations",
+            name="created_by",
+            field=models.ForeignKey(
+                default=2,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="locations",
+                to="users.profile",
+            ),
         ),
         migrations.AlterField(
-            model_name='storytags',
-            name='created_by',
-            field=models.ForeignKey(default=2, on_delete=django.db.models.deletion.CASCADE, related_name='tags', to='users.profile'),
+            model_name="storytags",
+            name="created_by",
+            field=models.ForeignKey(
+                default=2,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tags",
+                to="users.profile",
+            ),
         ),
     ]

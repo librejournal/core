@@ -13,6 +13,7 @@ class IsUserNotVerifiedYet(BasePermission):
             return True
         return not user_verification.is_verified
 
+
 class IsUserVerified(BasePermission):
     def has_permission(self, request, view):
         return not IsUserNotVerifiedYet().has_permission(request, view)

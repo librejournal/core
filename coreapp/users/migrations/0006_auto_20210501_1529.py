@@ -7,23 +7,23 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0005_auto_20210501_1500'),
+        ("users", "0005_auto_20210501_1500"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='uuid',
+            model_name="profile",
+            name="uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='userstatisticts',
-            name='number_of_posts',
+            model_name="userstatisticts",
+            name="number_of_posts",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='userstatisticts',
-            name='reputation',
+            model_name="userstatisticts",
+            name="reputation",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

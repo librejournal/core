@@ -10,7 +10,9 @@ User = get_user_model()
 # Create your models here.
 class Story(TimeStampedModel):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
-    author = models.ForeignKey("users.Profile", on_delete=models.CASCADE, related_name="stories")
+    author = models.ForeignKey(
+        "users.Profile", on_delete=models.CASCADE, related_name="stories"
+    )
     tags = models.ManyToManyField("stories.StoryTags")
     locations = models.ManyToManyField("stories.StoryLocations")
 
@@ -68,7 +70,9 @@ class StoryComponentPictures(TimeStampedModel):
         "stories.StoryComponent", on_delete=models.CASCADE, related_name="pictures"
     )
     picture = models.ForeignKey(
-        "files.Picture", on_delete=models.CASCADE, related_name="related_picture_components"
+        "files.Picture",
+        on_delete=models.CASCADE,
+        related_name="related_picture_components",
     )
 
 
@@ -98,9 +102,9 @@ class StoryTags(TimeStampedModel):
             system_profile = User.get_system_user().profile
             self.created_by = system_profile
 
-            update_fields = kwargs.get('update_fields', None)
+            update_fields = kwargs.get("update_fields", None)
             if update_fields:
-                kwargs['update_fields'] = set(update_fields).union({'created_by'})
+                kwargs["update_fields"] = set(update_fields).union({"created_by"})
 
         return super().save(*args, **kwargs)
 
@@ -124,9 +128,9 @@ class StoryLocations(TimeStampedModel):
             system_profile = User.get_system_user().profile
             self.created_by = system_profile
 
-            update_fields = kwargs.get('update_fields', None)
+            update_fields = kwargs.get("update_fields", None)
             if update_fields:
-                kwargs['update_fields'] = set(update_fields).union({'created_by'})
+                kwargs["update_fields"] = set(update_fields).union({"created_by"})
 
         return super().save(*args, **kwargs)
 
@@ -134,16 +138,24 @@ class StoryLocations(TimeStampedModel):
 class Comment(TimeStampedModel):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="comments")
-    author = models.ForeignKey("users.Profile", on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(
+        "users.Profile", on_delete=models.CASCADE, related_name="comments"
+    )
     # Sanitize HTML when saving
     text = models.TextField()
+
 
 class StoryLikes(TimeStampedModel):
     is_like = models.BooleanField(default=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="likes")
-    author = models.ForeignKey("users.Profile", on_delete=models.CASCADE, related_name="story_likes")
+    author = models.ForeignKey(
+        "users.Profile", on_delete=models.CASCADE, related_name="story_likes"
+    )
+
 
 class CommentLikes(TimeStampedModel):
     is_like = models.BooleanField(default=True)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="likes")
-    author = models.ForeignKey("users.Profile", on_delete=models.CASCADE, related_name="comment_likes")
+    author = models.ForeignKey(
+        "users.Profile", on_delete=models.CASCADE, related_name="comment_likes"
+    )

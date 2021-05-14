@@ -7,18 +7,18 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('files', '0001_initial'),
+        ("files", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='file',
-            name='attachment_uuid',
+            model_name="file",
+            name="attachment_uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
         migrations.AlterField(
-            model_name='picture',
-            name='attachment_uuid',
+            model_name="picture",
+            name="attachment_uuid",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
     ]

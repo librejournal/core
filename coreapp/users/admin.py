@@ -7,8 +7,10 @@ User = get_user_model()
 
 # Register your models here.
 
+
 class UserVerificationInline(admin.TabularInline):
     model = UserVerification
+
 
 class UserProfileInlineAdmin(admin.TabularInline):
     model = Profile
@@ -34,5 +36,6 @@ class UserAdmin(admin.ModelAdmin):
         UserVerificationInline,
         UserProfileInlineAdmin,
     ]
+
 
 admin.site.register(User, UserAdmin)

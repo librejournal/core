@@ -6,9 +6,15 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.models import Token
 
-from coreapp.users.models import TOKEN_TYPE_CHOICES, UserVerification, Profile, UserStatisticts
+from coreapp.users.models import (
+    TOKEN_TYPE_CHOICES,
+    UserVerification,
+    Profile,
+    UserStatisticts,
+)
 
 User = get_user_model()
+
 
 class TinyUserSerializer(serializers.ModelSerializer):
     profile_id = serializers.SerializerMethodField()
@@ -35,6 +41,7 @@ class TinyUserSerializer(serializers.ModelSerializer):
             "profile_id",
             "username",
         ]
+
 
 class UserSerializer(serializers.ModelSerializer):
     profile_id = serializers.SerializerMethodField()
@@ -73,7 +80,9 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(required=True, write_only=True)
 
     def validate(self, attrs):
-        user_verification = UserVerification.objects.filter(user__email=attrs['email']).first()
+        user_verification = UserVerification.objects.filter(
+            user__email=attrs["email"]
+        ).first()
         if not user_verification or not user_verification.is_verified:
             raise ValidationError("User is not yet verified")
         return attrs
@@ -156,13 +165,13 @@ class VerificationSerializer(serializers.Serializer):
     type = serializers.ChoiceField(choices=TOKEN_TYPE_CHOICES)
 
     def validate(self, attrs):
-        email = attrs['email']
+        email = attrs["email"]
         user = User.objects.filter(email=email).first()
         if not user:
             raise ValidationError("User with email does not exist.")
-        attrs['user'] = user
+        attrs["user"] = user
         return attrs
 
     def create(self, validated_data):
-        user = validated_data['user']
-        return user.get_or_create_verification_token(validated_data['type'])
+        user = validated_data["user"]
+        return user.get_or_create_verification_token(validated_data["type"])

@@ -15,19 +15,21 @@ from rest_framework.authtoken.models import Token
 
 
 TOKEN_TYPE_CHOICES = Choices(
-    'GENERIC',
-    'EMAIL_VERIFICATION',
-    'SMS_VERIFICATION',
+    "GENERIC",
+    "EMAIL_VERIFICATION",
+    "SMS_VERIFICATION",
 )
 PROFILE_TYPE_CHOICES = Choices(
-    'WRITER',
-    'READER',
+    "WRITER",
+    "READER",
 )
 
 logger = logging.getLogger(__name__)
 
+
 def _get_default_valid_until(*args, **kwargs):
     return timezone.now() + timedelta(days=1)
+
 
 class User(AbstractUser, TimeStampedModel):
     # ForeignKey to self...
@@ -43,7 +45,7 @@ class User(AbstractUser, TimeStampedModel):
                 "first_name": "System",
                 "last_name": "System",
                 "email": "system@librejournal.codes",
-            }
+            },
         )
         obj.set_unusable_password()
         obj.save()
@@ -72,13 +74,17 @@ class User(AbstractUser, TimeStampedModel):
 
 
 class GenericToken(TimeStampedModel):
-    user = models.ForeignKey(User, related_name="generic_tokens", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="generic_tokens", on_delete=models.CASCADE
+    )
     key = models.CharField(max_length=40, primary_key=True)
-    type = models.CharField(choices=TOKEN_TYPE_CHOICES, max_length=100, default=TOKEN_TYPE_CHOICES.GENERIC)
+    type = models.CharField(
+        choices=TOKEN_TYPE_CHOICES, max_length=100, default=TOKEN_TYPE_CHOICES.GENERIC
+    )
     valid_until = models.DateTimeField(default=_get_default_valid_until)
 
     class Meta:
-        unique_together = [['user', 'type']]
+        unique_together = [["user", "type"]]
 
     @classmethod
     def generate_key(cls):
@@ -97,12 +103,15 @@ class GenericToken(TimeStampedModel):
 class Profile(TimeStampedModel):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    type = models.CharField(max_length=50, choices=PROFILE_TYPE_CHOICES, default=PROFILE_TYPE_CHOICES.READER)
+    type = models.CharField(
+        max_length=50, choices=PROFILE_TYPE_CHOICES, default=PROFILE_TYPE_CHOICES.READER
+    )
     followed_locations = models.ManyToManyField(
         "stories.StoryLocations",
         related_name="followed_by",
     )
     followed_authors = models.ManyToManyField("self", related_name="followed_by")
+
 
 class UserVerification(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -116,17 +125,22 @@ class UserVerification(TimeStampedModel):
 
     def _send_verification_email(self):
         from coreapp.users.verification.email import send_simple_verification_mail
+
         if not settings.ENABLE_EMAILS:
             logger.debug("Emails are not enabled.")
             return
-        token = self.user.get_or_create_verification_token(TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION)
+        token = self.user.get_or_create_verification_token(
+            TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION
+        )
         send_simple_verification_mail(self.user.email, str(token.key))
 
     def _send_verification_sms(self):
         if not settings.ENABLE_SMS:
             logger.debug("SMSs are not enabled.")
             return
-        token_key = self.user.get_or_create_verification_token(TOKEN_TYPE_CHOICES.SMS_VERIFICATION)
+        token_key = self.user.get_or_create_verification_token(
+            TOKEN_TYPE_CHOICES.SMS_VERIFICATION
+        )
 
     def save(self, *args, **kwargs):
         if not self.pk:

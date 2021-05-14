@@ -11,27 +11,71 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0002_auto_20210418_1019'),
+        ("users", "0002_auto_20210418_1019"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='type',
-            field=models.CharField(choices=[('WRITER', 'WRITER'), ('READER', 'READER')], default='READER', max_length=50),
+            model_name="profile",
+            name="type",
+            field=models.CharField(
+                choices=[("WRITER", "WRITER"), ("READER", "READER")],
+                default="READER",
+                max_length=50,
+            ),
         ),
         migrations.CreateModel(
-            name='GenericToken',
+            name="GenericToken",
             fields=[
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('key', models.CharField(max_length=40, primary_key=True, serialize=False)),
-                ('type', models.CharField(choices=[('GENERIC', 'GENERIC'), ('EMAIL_VERIFICATION', 'EMAIL_VERIFICATION'), ('SMS_VERIFICATION', 'SMS_VERIFICATION')], default='GENERIC', max_length=100)),
-                ('valid_until', models.DateTimeField(default=coreapp.users.models._get_default_valid_until)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='generic_tokens', to=settings.AUTH_USER_MODEL)),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "key",
+                    models.CharField(max_length=40, primary_key=True, serialize=False),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[
+                            ("GENERIC", "GENERIC"),
+                            ("EMAIL_VERIFICATION", "EMAIL_VERIFICATION"),
+                            ("SMS_VERIFICATION", "SMS_VERIFICATION"),
+                        ],
+                        default="GENERIC",
+                        max_length=100,
+                    ),
+                ),
+                (
+                    "valid_until",
+                    models.DateTimeField(
+                        default=coreapp.users.models._get_default_valid_until
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="generic_tokens",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('user', 'type')},
+                "unique_together": {("user", "type")},
             },
         ),
     ]

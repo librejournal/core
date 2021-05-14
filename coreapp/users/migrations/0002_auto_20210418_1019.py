@@ -10,37 +10,76 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0002_initial'),
-        ('users', '0001_initial'),
+        ("stories", "0002_initial"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='user',
-            name='followed_authors',
+            model_name="user",
+            name="followed_authors",
         ),
         migrations.RemoveField(
-            model_name='user',
-            name='followed_locations',
+            model_name="user",
+            name="followed_locations",
         ),
         migrations.RemoveField(
-            model_name='user',
-            name='type',
+            model_name="user",
+            name="type",
         ),
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('uuid', models.UUIDField(unique=True)),
-                ('type', models.CharField(max_length=50)),
-                ('followed_authors', models.ManyToManyField(related_name='_users_profile_followed_authors_+', to='users.Profile')),
-                ('followed_locations', models.ManyToManyField(related_name='followed_by', to='stories.StoryLocations')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                ("uuid", models.UUIDField(unique=True)),
+                ("type", models.CharField(max_length=50)),
+                (
+                    "followed_authors",
+                    models.ManyToManyField(
+                        related_name="_users_profile_followed_authors_+",
+                        to="users.Profile",
+                    ),
+                ),
+                (
+                    "followed_locations",
+                    models.ManyToManyField(
+                        related_name="followed_by", to="stories.StoryLocations"
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

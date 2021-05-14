@@ -48,7 +48,7 @@ class VerificationView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         token = serializer.save()
-        return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+        return Response({"token": token.key}, status=status.HTTP_201_CREATED)
 
 
 class AuthViewSet(viewsets.GenericViewSet):
@@ -117,7 +117,9 @@ class AuthViewSet(viewsets.GenericViewSet):
 
     def get_permissions(self):
         if not isinstance(self.permission_classes_override, dict):
-            raise ImproperlyConfigured("permission_classes_override should be a dict mapping.")
+            raise ImproperlyConfigured(
+                "permission_classes_override should be a dict mapping."
+            )
 
         if self.action in self.permission_classes_override.keys():
             permission_classes = self.permission_classes_override[self.action]

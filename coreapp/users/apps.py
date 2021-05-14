@@ -7,6 +7,7 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         from .models import User, Profile, PROFILE_TYPE_CHOICES
+
         user = User.get_system_user()
         Profile.objects.get_or_create(
             user=user,

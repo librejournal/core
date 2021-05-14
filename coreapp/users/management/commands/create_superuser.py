@@ -5,8 +5,9 @@ from coreapp.utils.env_utils import is_local_env
 
 User = get_user_model()
 
+
 class Command(BaseCommand):
-    help = 'Create initial superuser.'
+    help = "Create initial superuser."
 
     def handle(self, *args, **options):
         if not is_local_env():
