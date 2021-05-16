@@ -112,6 +112,9 @@ class Profile(TimeStampedModel):
     )
     followed_authors = models.ManyToManyField("self", related_name="followed_by")
 
+    def __str__(self):
+        return f"User(username={self.user.username}) Profile"
+
 
 class UserVerification(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
