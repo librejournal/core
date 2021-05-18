@@ -45,8 +45,14 @@ class StoryLocationSerializer(serializers.ModelSerializer):
         internal["created_by"] = _get_current_user_or_system_user_profile()
         return internal
 
+class StoryComponentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.StoryComponent
+        fields = "__all__"
+
 
 class StorySerializer(serializers.ModelSerializer):
+    # creation and update only...
     author = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
     tags = serializers.PrimaryKeyRelatedField(
         queryset=models.StoryTags.objects.all(),
@@ -91,7 +97,13 @@ class StorySerializer(serializers.ModelSerializer):
         return obj.can_user_dislike(request_user)
 
 
-class StoryComponentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.StoryComponent
-        fields = "__all__"
+class RenderStorySerializer(serializers.ModelSerializer):
+    # for retrieve / list actions
+    author = serializers.SerializerMethodField()
+    tags = StoryTagsSerializer(read_only=True, many=True)
+    locations = StoryLocationSerializer(read_only=True, many=True)
+    components = StoryComponentSerializer(read_only=True, many=True)
+
+    def get_author(self, obj):
+        from coreapp.users.profiles.serializers import TinyProfileSerializer
+        return TinyProfileSerializer(obj.profile).data

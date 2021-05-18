@@ -28,13 +28,18 @@ class StoryTagViewSet(ModelViewSet):
 
 
 class StoryViewSet(ModelViewSet):
-    serializer_class = story_serializers.StorySerializer
     permission_classes = [IsAuthenticated]
     # Implement pagination class
     pagination_class = None
     lookup_field = "id"
     lookup_url_kwarg = "story_id"
     queryset = story_models.Story.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return story_serializers.RenderStorySerializer
+        return story_serializers.StorySerializer
+
 
 
 class StoryComponentViewSet(ModelViewSet):
@@ -51,8 +56,7 @@ class StoryComponentViewSet(ModelViewSet):
 
     @property
     def story(self):
-        story_id = self.kwargs.get("story_id", None)
-        return story_models.Story.objects.filter(id=story_id).first()
+        return story_models.Story.objects.filter(id=self.story_id).first()
 
     def get_queryset(self):
         assert self.story_id is not None
