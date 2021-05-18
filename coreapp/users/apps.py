@@ -2,6 +2,7 @@ import logging
 
 from django.conf import settings
 from django.apps import AppConfig
+from django.db import OperationalError
 
 logger = logging.getLogger(__name__)
 
@@ -41,5 +42,8 @@ class UsersConfig(AppConfig):
 
 
     def ready(self):
-        self._create_system_user()
-        self._create_service_users_and_tokens()
+        try:
+            self._create_system_user()
+            self._create_service_users_and_tokens()
+        except OperationalError:
+            logger.debug("System user and tokens are not created because tables don't exist...")
