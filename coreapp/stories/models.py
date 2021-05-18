@@ -16,6 +16,7 @@ class Story(TimeStampedModel):
     )
     tags = models.ManyToManyField("stories.StoryTags")
     locations = models.ManyToManyField("stories.StoryLocations")
+    is_draft = models.BooleanField(default=True)
 
     def profile_has_like_or_dislike(self, profile):
         return self.likes.filter(author=profile).exists()

@@ -3,6 +3,7 @@ import copy
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from coreapp.stories import serializers as story_serializers
@@ -33,7 +34,7 @@ class StoryViewSet(ModelViewSet):
     pagination_class = None
     lookup_field = "id"
     lookup_url_kwarg = "story_id"
-    queryset = story_models.Story.objects.all()
+    queryset = story_models.Story.objects.filter(is_draft=False)
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -72,3 +73,30 @@ class StoryComponentViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class PublishStoryView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    @property
+    def story_id(self):
+        return self.kwargs.get("story_id", None)
+
+    def post(self, request, *args, **kwargs):
+        assert self.story_id is not None
+        story = story_models.Story.objects.get(id=self.story_id)
+        story.is_draft = False
+        story.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ListDraftStories(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = story_serializers.RenderStorySerializer
+
+    def get_queryset(self):
+        request_user_profile = getattr(self.request.user, "profile", None)
+        assert request_user_profile is not None
+        return story_models.Story.objects.filter(
+            author=request_user_profile,
+            is_draft=True,
+        )

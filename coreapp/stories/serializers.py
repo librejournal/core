@@ -52,6 +52,7 @@ class StoryComponentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.StoryComponent
         fields = [
+            "id",
             "story",
             "text",
             "type",
@@ -86,6 +87,7 @@ class StorySerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "uuid",
+            "is_draft",
             "author",
             "tags",
             "locations",
@@ -116,16 +118,38 @@ class RenderStorySerializer(serializers.ModelSerializer):
     tags = StoryTagsSerializer(read_only=True, many=True)
     locations = StoryLocationSerializer(read_only=True, many=True)
     components = StoryComponentSerializer(read_only=True, many=True)
+    can_user_like = serializers.SerializerMethodField()
+    can_user_dislike = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Story
         fields = [
+            "id",
+            "uuid",
+            "is_draft",
             "author",
             "tags",
             "locations",
             "components",
+            "can_user_like",
+            "can_user_dislike",
         ]
+
+    @property
+    def request_user_profile(self):
+        request_user = getattr(get_current_request(), "user", None)
+        return getattr(request_user, "profile", None)
 
     def get_author(self, obj):
         from coreapp.users.profiles.serializers import TinyProfileSerializer
         return TinyProfileSerializer(obj.author).data
+
+    def get_can_user_like(self, obj):
+        if isinstance(obj, dict):
+            return False
+        return obj.can_user_like(self.request_user_profile)
+
+    def get_can_user_dislike(self, obj):
+        if isinstance(obj, dict):
+            return False
+        return obj.can_user_dislike(self.request_user_profile)
