@@ -46,9 +46,17 @@ class StoryLocationSerializer(serializers.ModelSerializer):
         return internal
 
 class StoryComponentSerializer(serializers.ModelSerializer):
+    type = serializers.ChoiceField(choices=models.StoryComponent.TYPE_CHOICES)
+    type_setting = serializers.CharField(required=True)
+
     class Meta:
         model = models.StoryComponent
-        fields = "__all__"
+        fields = [
+            "story",
+            "text",
+            "type",
+            "type_setting",
+        ]
 
 
 class StorySerializer(serializers.ModelSerializer):
@@ -70,6 +78,9 @@ class StorySerializer(serializers.ModelSerializer):
         many=True,
     )
 
+    can_user_like = serializers.SerializerMethodField()
+    can_user_dislike = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Story
         fields = [
@@ -79,22 +90,24 @@ class StorySerializer(serializers.ModelSerializer):
             "tags",
             "locations",
             "components",
+            "can_user_like",
+            "can_user_dislike",
         ]
 
-    can_user_like = serializers.SerializerMethodField()
-    can_user_dislike = serializers.SerializerMethodField()
+    @property
+    def request_user_profile(self):
+        request_user = getattr(get_current_request(), "user", None)
+        return getattr(request_user, "profile", None)
 
     def get_can_user_like(self, obj):
         if isinstance(obj, dict):
             return False
-        request_user = getattr(get_current_request(), "user", None)
-        return obj.can_user_like(request_user)
+        return obj.can_user_like(self.request_user_profile)
 
     def get_can_user_dislike(self, obj):
         if isinstance(obj, dict):
             return False
-        request_user = getattr(get_current_request(), "user", None)
-        return obj.can_user_dislike(request_user)
+        return obj.can_user_dislike(self.request_user_profile)
 
 
 class RenderStorySerializer(serializers.ModelSerializer):
@@ -104,6 +117,15 @@ class RenderStorySerializer(serializers.ModelSerializer):
     locations = StoryLocationSerializer(read_only=True, many=True)
     components = StoryComponentSerializer(read_only=True, many=True)
 
+    class Meta:
+        model = models.Story
+        fields = [
+            "author",
+            "tags",
+            "locations",
+            "components",
+        ]
+
     def get_author(self, obj):
         from coreapp.users.profiles.serializers import TinyProfileSerializer
-        return TinyProfileSerializer(obj.profile).data
+        return TinyProfileSerializer(obj.author).data

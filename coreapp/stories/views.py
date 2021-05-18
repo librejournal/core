@@ -67,7 +67,7 @@ class StoryComponentViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         request_data = copy.deepcopy(request.data)
         request_data['story'] = self.story_id
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)

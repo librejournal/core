@@ -23,12 +23,12 @@ class Story(TimeStampedModel):
     def can_user_like(self, profile):
         # (no like / dislike) or (dislike)
         has_dislike = self.likes.filter(author=profile, is_like=False).exists()
-        return has_dislike or not self.user_has_like_or_dislike(profile)
+        return has_dislike or not self.profile_has_like_or_dislike(profile)
 
     def can_user_dislike(self, profile):
         # (no like / dislike) or (like)
         has_like = self.likes.filter(author=profile, is_like=True).exists()
-        return has_like or not self.user_has_like_or_dislike(profile)
+        return has_like or not self.profile_has_like_or_dislike(profile)
 
     def like(self, profile):
         kwargs = {

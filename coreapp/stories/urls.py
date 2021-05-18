@@ -54,7 +54,7 @@ urlpatterns = [
                 path("locations", story_tag_list_create, name="story-tag-list-create"),
                 path("", story_list_create, name="story-list-create"),
                 path(
-                    "<int:story_id>",
+                    "<int:story_id>/",
                     include(
                         [
                             path("", story_detail, name="story-detail"),
