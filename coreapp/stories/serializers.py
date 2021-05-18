@@ -153,3 +153,10 @@ class RenderStorySerializer(serializers.ModelSerializer):
         if isinstance(obj, dict):
             return False
         return obj.can_user_dislike(self.request_user_profile)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        for idx, component in enumerate(data['components']):
+            component['order_id'] = idx + 1
+        return data
+
