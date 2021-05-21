@@ -81,12 +81,16 @@ class StorySerializer(serializers.ModelSerializer):
 
     can_user_like = serializers.SerializerMethodField()
     can_user_dislike = serializers.SerializerMethodField()
+    like_count = serializers.IntegerField(read_only=True, default=0)
+    dislike_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = models.Story
         fields = [
             "id",
             "uuid",
+            "created",
+            "modified",
             "is_draft",
             "author",
             "tags",
@@ -94,6 +98,18 @@ class StorySerializer(serializers.ModelSerializer):
             "components",
             "can_user_like",
             "can_user_dislike",
+            "like_count",
+            "dislike_count",
+        ]
+        read_only_fields = [
+            "id",
+            "uuid",
+            "created",
+            "modified",
+            "can_user_like",
+            "can_user_dislike",
+            "like_count",
+            "dislike_count",
         ]
 
     @property
@@ -120,12 +136,16 @@ class RenderStorySerializer(serializers.ModelSerializer):
     components = StoryComponentSerializer(read_only=True, many=True)
     can_user_like = serializers.SerializerMethodField()
     can_user_dislike = serializers.SerializerMethodField()
+    like_count = serializers.IntegerField(read_only=True, default=0)
+    dislike_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = models.Story
         fields = [
             "id",
             "uuid",
+            "created",
+            "modified",
             "is_draft",
             "author",
             "tags",
@@ -133,6 +153,8 @@ class RenderStorySerializer(serializers.ModelSerializer):
             "components",
             "can_user_like",
             "can_user_dislike",
+            "like_count",
+            "dislike_count",
         ]
 
     @property
@@ -173,3 +195,5 @@ class RenderStorySerializer(serializers.ModelSerializer):
             component['order_id'] = idx + 1
         return data
 
+    def save(self, **kwargs):
+        raise NotImplementedError("This serializer shouldn't be used for modifying Story!")

@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.functional import cached_property
 from model_utils import Choices
 
 from model_utils.models import TimeStampedModel
@@ -17,6 +18,14 @@ class Story(TimeStampedModel):
     tags = models.ManyToManyField("stories.StoryTags")
     locations = models.ManyToManyField("stories.StoryLocations")
     is_draft = models.BooleanField(default=True)
+
+    @cached_property
+    def like_count(self):
+        return self.likes.filter(is_like=True).count()
+
+    @cached_property
+    def dislike_count(self):
+        return self.likes.filter(is_like=False).count()
 
     def profile_has_like_or_dislike(self, profile):
         return self.likes.filter(author=profile).exists()
@@ -36,7 +45,7 @@ class Story(TimeStampedModel):
             "story": self,
             "author": profile,
         }
-        if not self.user_has_like_or_dislike(profile):
+        if not self.profile_has_like_or_dislike(profile):
             self.likes.create(is_like=True, **kwargs)
 
         dislike = self.likes.filter(is_like=False, **kwargs).first()
@@ -49,7 +58,7 @@ class Story(TimeStampedModel):
             "story": self,
             "author": profile,
         }
-        if not self.user_has_like_or_dislike(profile):
+        if not self.profile_has_like_or_dislike(profile):
             self.likes.create(is_like=False, **kwargs)
 
         like = self.likes.filter(is_like=True, **kwargs).first()
@@ -136,7 +145,7 @@ class Comment(TimeStampedModel):
 
 
 class StoryLikes(TimeStampedModel):
-    is_like = models.BooleanField(default=True)
+    is_like = models.BooleanField(default=True, db_index=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name="likes")
     author = models.ForeignKey(
         "users.Profile", on_delete=models.CASCADE, related_name="story_likes"
@@ -144,7 +153,7 @@ class StoryLikes(TimeStampedModel):
 
 
 class CommentLikes(TimeStampedModel):
-    is_like = models.BooleanField(default=True)
+    is_like = models.BooleanField(default=True, db_index=True)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="likes")
     author = models.ForeignKey(
         "users.Profile", on_delete=models.CASCADE, related_name="comment_likes"
