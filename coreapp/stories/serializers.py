@@ -54,10 +54,15 @@ class StoryComponentSerializer(serializers.ModelSerializer):
         model = models.StoryComponent
         fields = [
             "id",
+            "order_id",
             "story",
             "text",
             "type",
             "type_setting",
+        ]
+        read_only_fields = [
+            "id",
+            "order_id",
         ]
 
 
@@ -196,11 +201,11 @@ class RenderStorySerializer(serializers.ModelSerializer):
             return False
         return obj.can_user_dislike(self.request_user_profile)
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        for idx, component in enumerate(data["components"]):
-            component["order_id"] = idx + 1
-        return data
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+    #     for idx, component in enumerate(data["components"]):
+    #         component["order_id"] = idx + 1
+    #     return data
 
     def save(self, **kwargs):
         raise NotImplementedError(

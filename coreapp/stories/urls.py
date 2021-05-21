@@ -87,7 +87,7 @@ urlpatterns = [
                                             name="story-component-detail",
                                         ),
                                         path(
-                                            "orders",
+                                            "order",
                                             views.UpdateStoryComponentOrderView.as_view(),
                                             name="story-component-update-order",
                                         ),

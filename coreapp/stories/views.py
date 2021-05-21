@@ -87,6 +87,7 @@ class StoryComponentViewSet(ModelViewSet):
 
 class UpdateStoryComponentOrderView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = story_serializers.StoryComponentOrderSerializer
 
     def _bulk_update_order_ids(self):
         bulk_update_list = []
@@ -127,7 +128,6 @@ class UpdateStoryComponentOrderView(GenericAPIView):
         self._bulk_update_order_ids()
         qs = self.get_queryset()
         serializer = self.get_serializer(qs, many=True)
-        serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
