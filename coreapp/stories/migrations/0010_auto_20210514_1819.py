@@ -7,43 +7,57 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0006_auto_20210501_1529'),
-        ('stories', '0009_auto_20210514_1339'),
+        ("users", "0006_auto_20210501_1529"),
+        ("stories", "0009_auto_20210514_1339"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='storycomponentpictures',
-            name='picture',
+            model_name="storycomponentpictures",
+            name="picture",
         ),
         migrations.RemoveField(
-            model_name='storycomponentpictures',
-            name='story_component',
+            model_name="storycomponentpictures",
+            name="story_component",
         ),
         migrations.AddField(
-            model_name='storycomponent',
-            name='type',
-            field=models.CharField(blank=True, db_index=True, max_length=100, null=True),
+            model_name="storycomponent",
+            name="type",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=100, null=True
+            ),
         ),
         migrations.AddField(
-            model_name='storycomponent',
-            name='type_setting',
+            model_name="storycomponent",
+            name="type_setting",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AlterField(
-            model_name='storylocations',
-            name='created_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='locations', to='users.profile'),
+            model_name="storylocations",
+            name="created_by",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="locations",
+                to="users.profile",
+            ),
         ),
         migrations.AlterField(
-            model_name='storytags',
-            name='created_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tags', to='users.profile'),
+            model_name="storytags",
+            name="created_by",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tags",
+                to="users.profile",
+            ),
         ),
         migrations.DeleteModel(
-            name='StoryComponentFiles',
+            name="StoryComponentFiles",
         ),
         migrations.DeleteModel(
-            name='StoryComponentPictures',
+            name="StoryComponentPictures",
         ),
     ]

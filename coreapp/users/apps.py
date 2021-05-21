@@ -8,6 +8,7 @@ from coreapp.utils.env_utils import is_local_env
 
 logger = logging.getLogger(__name__)
 
+
 class UsersConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "coreapp.users"
@@ -34,7 +35,7 @@ class UsersConfig(AppConfig):
             user.set_unusable_password()
             user.save()
 
-            access_token = value['access_token'] or Token.generate_key()
+            access_token = value["access_token"] or Token.generate_key()
             try:
                 token = Token.objects.get(user_id=user.id)
             except Token.DoesNotExist:
@@ -44,6 +45,7 @@ class UsersConfig(AppConfig):
 
     def _create_superuser(self):
         from .models import User
+
         if not is_local_env():
             return
         user, _ = User.objects.get_or_create(username="superuser")
@@ -58,4 +60,6 @@ class UsersConfig(AppConfig):
             self._create_service_users_and_tokens()
             self._create_superuser()
         except (OperationalError, ProgrammingError):
-            logger.debug("System user and tokens are not created because tables don't exist...")
+            logger.debug(
+                "System user and tokens are not created because tables don't exist..."
+            )

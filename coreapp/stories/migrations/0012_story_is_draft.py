@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0011_alter_storycomponent_type'),
+        ("stories", "0011_alter_storycomponent_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='story',
-            name='is_draft',
+            model_name="story",
+            name="is_draft",
             field=models.BooleanField(default=True),
         ),
     ]

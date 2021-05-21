@@ -80,9 +80,28 @@ class StoryComponent(TimeStampedModel):
     )
     text = models.TextField()
     # type = TEXT / TITLE / IMAGE - CharField(Enum)
-    type = models.CharField(max_length=100, choices=TYPE_CHOICES, db_index=True, null=True, blank=True)
+    type = models.CharField(
+        max_length=100, choices=TYPE_CHOICES, db_index=True, null=True, blank=True
+    )
     # type_setting = CharField
     type_setting = models.CharField(max_length=100, null=True, blank=True)
+    order_id = models.IntegerField(null=True, blank=True)
+
+    def _get_order_id(self):
+        # if null, just move to last
+        parent_story_component_count = self.story.components.count() - (
+            1 if self.pk else 0
+        )
+        return parent_story_component_count + 1
+
+    def save(self, *args, **kwargs):
+        update_fields = kwargs.get("update_fields", [])
+        if not self.order_id:
+            self.order_id = self._get_order_id()
+            if update_fields:
+                update_fields.append("order_id")
+                kwargs["update_fields"] = update_fields
+        super().save(*args, **kwargs)
 
 
 class StoryTags(TimeStampedModel):

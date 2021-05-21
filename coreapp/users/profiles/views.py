@@ -48,7 +48,7 @@ class ProfileView(viewsets.GenericViewSet):
         url_name="profile-detail-with-pk",
     )
     def profile_with_pk(self, request, *args, **kwargs):
-        #api/profile/<id>/detail GET
+        # api/profile/<id>/detail GET
         profile_pk = kwargs.get("pk")
         return self._profile_response_with_pk(profile_pk)
 
@@ -61,7 +61,7 @@ class ProfileView(viewsets.GenericViewSet):
         url_name="profile-detail",
     )
     def profile_from_request_user(self, request, *args, **kwargs):
-        #api/profile/self-detail GET
+        # api/profile/self-detail GET
         profile_pk = getattr(
             getattr(
                 request.user,

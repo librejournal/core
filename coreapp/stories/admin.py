@@ -7,6 +7,7 @@ from coreapp.stories.models import StoryLocations, StoryTags
 
 User = get_user_model()
 
+
 class StoryLocationAdmin(admin.ModelAdmin):
     model = StoryLocations
     list_display = [
@@ -34,6 +35,7 @@ class StoryLocationAdmin(admin.ModelAdmin):
         sys_profile = User.get_system_user().profile
         obj.created_by = sys_profile
         super().save_model(request, obj, form, change)
+
 
 class StoryTagAdmin(admin.ModelAdmin):
     model = StoryTags

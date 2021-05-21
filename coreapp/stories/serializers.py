@@ -45,6 +45,7 @@ class StoryLocationSerializer(serializers.ModelSerializer):
         internal["created_by"] = _get_current_user_or_system_user_profile()
         return internal
 
+
 class StoryComponentSerializer(serializers.ModelSerializer):
     type = serializers.ChoiceField(choices=models.StoryComponent.TYPE_CHOICES)
     type_setting = serializers.CharField(required=True)
@@ -58,6 +59,11 @@ class StoryComponentSerializer(serializers.ModelSerializer):
             "type",
             "type_setting",
         ]
+
+
+class StoryComponentOrderSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    order_id = serializers.IntegerField()
 
 
 class StorySerializer(serializers.ModelSerializer):
@@ -177,6 +183,7 @@ class RenderStorySerializer(serializers.ModelSerializer):
 
     def get_author(self, obj):
         from coreapp.users.profiles.serializers import TinyProfileSerializer
+
         return TinyProfileSerializer(obj.author).data
 
     def get_can_user_like(self, obj):
@@ -191,9 +198,11 @@ class RenderStorySerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        for idx, component in enumerate(data['components']):
-            component['order_id'] = idx + 1
+        for idx, component in enumerate(data["components"]):
+            component["order_id"] = idx + 1
         return data
 
     def save(self, **kwargs):
-        raise NotImplementedError("This serializer shouldn't be used for modifying Story!")
+        raise NotImplementedError(
+            "This serializer shouldn't be used for modifying Story!"
+        )

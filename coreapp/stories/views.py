@@ -1,5 +1,6 @@
 import copy
 
+from django.utils.functional import cached_property
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -47,10 +48,7 @@ class StoryViewSet(ModelViewSet):
         return [IsAuthenticated]
 
     def get_permissions(self):
-        return [
-            permission() for permission in self.get_permission_classes()
-        ]
-
+        return [permission() for permission in self.get_permission_classes()]
 
 
 class StoryComponentViewSet(ModelViewSet):
@@ -77,12 +75,60 @@ class StoryComponentViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         request_data = copy.deepcopy(request.data)
-        request_data['story'] = self.story_id
+        request_data["story"] = self.story_id
         serializer = self.get_serializer(data=request_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+
+class UpdateStoryComponentOrderView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def _bulk_update_order_ids(self):
+        bulk_update_list = []
+        for component in self.get_queryset().iterator():
+            component.order_id = self.id_to_order_id_map[component.id]
+            bulk_update_list.append(component)
+        updated_qs = story_models.StoryComponent.objects.bulk_update(
+            bulk_update_list,
+            ["order_id"],
+        )
+        return updated_qs
+
+    @cached_property
+    def request_data(self):
+        serializer = story_serializers.StoryComponentOrderSerializer(
+            data=self.request.data, many=True
+        )
+        serializer.is_valid(raise_exception=True)
+        return serializer.validated_data
+
+    @cached_property
+    def id_to_order_id_map(self):
+        mapping = {}
+        for data in self.request_data:
+            mapping[data["id"]] = data["order_id"]
+        return mapping
+
+    @cached_property
+    def story_component_id_list(self):
+        return list(self.id_to_order_id_map.keys())
+
+    def get_queryset(self):
+        return story_models.StoryComponent.objects.filter(
+            id__in=self.story_component_id_list,
+        )
+
+    def post(self, request, *args, **kwargs):
+        self._bulk_update_order_ids()
+        qs = self.get_queryset()
+        serializer = self.get_serializer(qs, many=True)
+        serializer.is_valid(raise_exception=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class PublishStoryView(GenericAPIView):
@@ -98,6 +144,7 @@ class PublishStoryView(GenericAPIView):
         story.is_draft = False
         story.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ListDraftStories(ListAPIView):
     permission_classes = [IsAuthenticated]

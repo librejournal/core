@@ -6,13 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0010_auto_20210514_1819'),
+        ("stories", "0010_auto_20210514_1819"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='storycomponent',
-            name='type',
-            field=models.CharField(blank=True, choices=[('TEXT', 'TEXT'), ('TITLE', 'TITLE'), ('IMAGE', 'IMAGE')], db_index=True, max_length=100, null=True),
+            model_name="storycomponent",
+            name="type",
+            field=models.CharField(
+                blank=True,
+                choices=[("TEXT", "TEXT"), ("TITLE", "TITLE"), ("IMAGE", "IMAGE")],
+                db_index=True,
+                max_length=100,
+                null=True,
+            ),
         ),
     ]

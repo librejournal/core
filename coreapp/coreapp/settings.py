@@ -196,5 +196,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 from .settings_utils import SERVICE_CONSTANTS
+
 # Accepts requests with this header as internal requests
 SERVICES = SERVICE_CONSTANTS
