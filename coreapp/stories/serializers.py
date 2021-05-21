@@ -140,17 +140,30 @@ class RenderStorySerializer(serializers.ModelSerializer):
         request_user = getattr(get_current_request(), "user", None)
         return getattr(request_user, "profile", None)
 
+    @property
+    def is_public_user(self):
+        is_authenticated = getattr(
+            getattr(
+                get_current_request(),
+                "user",
+                None,
+            ),
+            "is_authenticated",
+            False,
+        )
+        return not is_authenticated
+
     def get_author(self, obj):
         from coreapp.users.profiles.serializers import TinyProfileSerializer
         return TinyProfileSerializer(obj.author).data
 
     def get_can_user_like(self, obj):
-        if isinstance(obj, dict):
+        if isinstance(obj, dict) or self.is_public_user:
             return False
         return obj.can_user_like(self.request_user_profile)
 
     def get_can_user_dislike(self, obj):
-        if isinstance(obj, dict):
+        if isinstance(obj, dict) or self.is_public_user:
             return False
         return obj.can_user_dislike(self.request_user_profile)
 

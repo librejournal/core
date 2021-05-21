@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from coreapp.stories import serializers as story_serializers
 from coreapp.stories import models as story_models
@@ -40,6 +40,16 @@ class StoryViewSet(ModelViewSet):
         if self.request.method == "GET":
             return story_serializers.RenderStorySerializer
         return story_serializers.StorySerializer
+
+    def get_permission_classes(self):
+        if self.request.method == "GET":
+            return [AllowAny]
+        return [IsAuthenticated]
+
+    def get_permissions(self):
+        return [
+            permission() for permission in self.get_permission_classes()
+        ]
 
 
 
