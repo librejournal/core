@@ -71,6 +71,52 @@ class StoryComponentOrderSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()
 
 
+class StoryCommentSerializer(serializers.ModelSerializer):
+    can_user_like = serializers.SerializerMethodField()
+    can_user_dislike = serializers.SerializerMethodField()
+    like_count = serializers.IntegerField(read_only=True, default=0)
+    dislike_count = serializers.IntegerField(read_only=True, default=0)
+
+    class Meta:
+        model = models.Comment
+        fields = [
+            "id",
+            "uuid",
+            "story",
+            "author",
+            "text",
+            "can_user_like",
+            "can_user_dislike",
+            "like_count",
+            "dislike_count",
+        ]
+        extra_kwargs = {
+            "story": {"required": False},
+            "author": {"required": False},
+        }
+
+    def to_internal_value(self, data):
+        data = super().to_internal_value(data)
+        data["story"] = self.context["story"]
+        data["author"] = self.context["author"]
+        return data
+
+    @property
+    def request_user_profile(self):
+        request_user = getattr(get_current_request(), "user", None)
+        return getattr(request_user, "profile", None)
+
+    def get_can_user_like(self, obj):
+        if isinstance(obj, dict):
+            return False
+        return obj.can_user_like(self.request_user_profile)
+
+    def get_can_user_dislike(self, obj):
+        if isinstance(obj, dict):
+            return False
+        return obj.can_user_dislike(self.request_user_profile)
+
+
 class StorySerializer(serializers.ModelSerializer):
     # creation and update only...
     author = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all())
@@ -201,13 +247,52 @@ class RenderStorySerializer(serializers.ModelSerializer):
             return False
         return obj.can_user_dislike(self.request_user_profile)
 
-    # def to_representation(self, instance):
-    #     data = super().to_representation(instance)
-    #     for idx, component in enumerate(data["components"]):
-    #         component["order_id"] = idx + 1
-    #     return data
-
     def save(self, **kwargs):
         raise NotImplementedError(
             "This serializer shouldn't be used for modifying Story!"
         )
+
+
+class LikeDislikeSerializer(serializers.Serializer):
+    story_id = serializers.IntegerField(required=False)
+    comment_id = serializers.IntegerField(required=False)
+
+    def get_ids(self):
+        return {
+            "story_id": getattr(self.context.get("story", None), "id", None),
+            "comment_id": getattr(self.context.get("comment", None), "id", None),
+        }
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        ids = self.get_ids()
+        if ids["story_id"] and ids["comment_id"]:
+            raise serializers.ValidationError(
+                "Shouldn't recieve both story_id and comment_id."
+            )
+        attrs.update(ids)
+        return attrs
+
+    def like(self, profile, validated_data):
+        story_id = validated_data["story_id"]
+        comment_id = validated_data["comment_id"]
+
+        if story_id:
+            story = models.Story.objects.get(id=story_id)
+            story.like(profile)
+
+        if comment_id:
+            comment = models.Comment.objects.get(id=comment_id)
+            comment.like(profile)
+
+    def dislike(self, profile, validated_data):
+        story_id = validated_data["story_id"]
+        comment_id = validated_data["comment_id"]
+
+        if story_id:
+            story = models.Story.objects.get(id=story_id)
+            story.dislike(profile)
+
+        if comment_id:
+            comment = models.Comment.objects.get(id=comment_id)
+            comment.dislike(profile)

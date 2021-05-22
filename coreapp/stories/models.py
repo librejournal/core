@@ -30,12 +30,21 @@ class Story(TimeStampedModel):
     def profile_has_like_or_dislike(self, profile):
         return self.likes.filter(author=profile).exists()
 
+    def profile_owns_story(self, profile):
+        return self.author == profile
+
     def can_user_like(self, profile):
+        # if current story is authored by profile -> False
+        if self.profile_owns_story(profile):
+            return False
         # (no like / dislike) or (dislike)
         has_dislike = self.likes.filter(author=profile, is_like=False).exists()
         return has_dislike or not self.profile_has_like_or_dislike(profile)
 
     def can_user_dislike(self, profile):
+        # if current story is authored by profile -> False
+        if self.profile_owns_story(profile):
+            return False
         # (no like / dislike) or (like)
         has_like = self.likes.filter(author=profile, is_like=True).exists()
         return has_like or not self.profile_has_like_or_dislike(profile)
@@ -47,6 +56,7 @@ class Story(TimeStampedModel):
         }
         if not self.profile_has_like_or_dislike(profile):
             self.likes.create(is_like=True, **kwargs)
+            return
 
         dislike = self.likes.filter(is_like=False, **kwargs).first()
         if dislike:
@@ -60,6 +70,7 @@ class Story(TimeStampedModel):
         }
         if not self.profile_has_like_or_dislike(profile):
             self.likes.create(is_like=False, **kwargs)
+            return
 
         like = self.likes.filter(is_like=True, **kwargs).first()
         if like:
@@ -176,6 +187,64 @@ class Comment(TimeStampedModel):
     )
     # Sanitize HTML when saving
     text = models.TextField()
+
+    @cached_property
+    def like_count(self):
+        return self.likes.filter(is_like=True).count()
+
+    @cached_property
+    def dislike_count(self):
+        return self.likes.filter(is_like=False).count()
+
+    def profile_has_like_or_dislike(self, profile):
+        return self.likes.filter(author=profile).exists()
+
+    def profile_owns_story(self, profile):
+        return self.author == profile
+
+    def can_user_like(self, profile):
+        # if current story is authored by profile -> False
+        if self.profile_owns_story(profile):
+            return False
+        # (no like / dislike) or (dislike)
+        has_dislike = self.likes.filter(author=profile, is_like=False).exists()
+        return has_dislike or not self.profile_has_like_or_dislike(profile)
+
+    def can_user_dislike(self, profile):
+        # if current story is authored by profile -> False
+        if self.profile_owns_story(profile):
+            return False
+        # (no like / dislike) or (like)
+        has_like = self.likes.filter(author=profile, is_like=True).exists()
+        return has_like or not self.profile_has_like_or_dislike(profile)
+
+    def like(self, profile):
+        kwargs = {
+            "comment": self,
+            "author": profile,
+        }
+        if not self.profile_has_like_or_dislike(profile):
+            self.likes.create(is_like=True, **kwargs)
+            return
+
+        dislike = self.likes.filter(is_like=False, **kwargs).first()
+        if dislike:
+            dislike.is_like = True
+            dislike.save()
+
+    def dislike(self, profile):
+        kwargs = {
+            "comment": self,
+            "author": profile,
+        }
+        if not self.profile_has_like_or_dislike(profile):
+            self.likes.create(is_like=False, **kwargs)
+            return
+
+        like = self.likes.filter(is_like=True, **kwargs).first()
+        if like:
+            like.is_like = False
+            like.save()
 
 
 class StoryLikes(TimeStampedModel):

@@ -9,6 +9,22 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from coreapp.stories import serializers as story_serializers
 from coreapp.stories import models as story_models
+from coreapp.stories.view_mixins import StoryMixin, LikeDislikeView
+
+
+class StoryCommentViewSet(ModelViewSet, StoryMixin):
+    serializer_class = story_serializers.StoryCommentSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = None
+    lookup_field = "id"
+    lookup_url_kwarg = "id"
+    queryset = story_models.Comment.objects.all()
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx["story"] = self.story
+        ctx["author"] = getattr(self.request.user, "profile", None)
+        return ctx
 
 
 class StoryLocationViewSet(ModelViewSet):
@@ -51,21 +67,13 @@ class StoryViewSet(ModelViewSet):
         return [permission() for permission in self.get_permission_classes()]
 
 
-class StoryComponentViewSet(ModelViewSet):
+class StoryComponentViewSet(ModelViewSet, StoryMixin):
     serializer_class = story_serializers.StoryComponentSerializer
     permission_classes = [IsAuthenticated]
     # Implement pagination class
     pagination_class = None
     lookup_field = "id"
     lookup_url_kwarg = "id"
-
-    @property
-    def story_id(self):
-        return self.kwargs.get("story_id", None)
-
-    @property
-    def story(self):
-        return story_models.Story.objects.filter(id=self.story_id).first()
 
     def get_queryset(self):
         assert self.story_id is not None
@@ -131,12 +139,8 @@ class UpdateStoryComponentOrderView(GenericAPIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-class PublishStoryView(GenericAPIView):
+class PublishStoryView(GenericAPIView, StoryMixin):
     permission_classes = [IsAuthenticated]
-
-    @property
-    def story_id(self):
-        return self.kwargs.get("story_id", None)
 
     def post(self, request, *args, **kwargs):
         assert self.story_id is not None
@@ -157,3 +161,19 @@ class ListDraftStories(ListAPIView):
             author=request_user_profile,
             is_draft=True,
         )
+
+class StoryLikeView(LikeDislikeView):
+    action_type = "like"
+    object_type = "story"
+
+class StoryDislikeView(LikeDislikeView):
+    action_type = "dislike"
+    object_type = "story"
+
+class CommentLikeView(LikeDislikeView):
+    action_type = "like"
+    object_type = "comment"
+
+class CommentDislikeView(LikeDislikeView):
+    action_type = "dislike"
+    object_type = "comment"

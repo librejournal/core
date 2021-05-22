@@ -49,6 +49,22 @@ story_component_detail = views.StoryComponentViewSet.as_view(
     }
 )
 
+comments_list_create = views.StoryCommentViewSet.as_view(
+    {
+        "post": "create",
+        "get": "list",
+    }
+)
+
+comments_detail = views.StoryCommentViewSet.as_view(
+    {
+        "get": "retrieve",
+        "put": "update",
+        "patch": "partial_update",
+        "delete": "destroy",
+    }
+)
+
 stories_root_urls_list = [
     # api/stories/
     path("tags", story_tag_list_create, name="story-tag-list-create"),
@@ -87,6 +103,44 @@ components_urls_list = [
     )
 ]
 
+comments_urls_list = [
+    # api/stories/<int:story_id>/
+    path(
+        "comments/",
+        include(
+            [
+                path(
+                    "",
+                    comments_list_create,
+                    name="story-comments-list-create",
+                ),
+                path(
+                    "<int:id>/",
+                    include(
+                        [
+                            path(
+                                "",
+                                comments_detail,
+                                name="story-comments-detail",
+                            ),
+                            path(
+                                "like",
+                                views.CommentLikeView.as_view(),
+                                name="story-comments-like",
+                            ),
+                            path(
+                                "dislike",
+                                views.CommentDislikeView.as_view(),
+                                name="story-comments-like",
+                            )
+                        ]
+                    )
+                )
+            ]
+        )
+    )
+]
+
 story_detail_urls_list = [
     # api/stories/<int:story_id>/
     path("", story_detail, name="story-detail"),  # added to api spec doc
@@ -95,7 +149,18 @@ story_detail_urls_list = [
         views.PublishStoryView.as_view(),
         name="publish-story-view",
     ),  # added to api spec doc
+    path(
+        "like",
+        views.StoryLikeView.as_view(),
+        name="story-like-view",
+    ),
+    path(
+        "dislike",
+        views.StoryDislikeView.as_view(),
+        name="story-like-view",
+    ),
     *components_urls_list,
+    *comments_urls_list,
 ]
 
 urlpatterns = [
