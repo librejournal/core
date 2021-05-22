@@ -59,18 +59,21 @@ class FollowUnfollowSerializer(serializers.Serializer):
         story_tag_id_list = id_lists["story_tag_id_list"]
 
         if profile_id_list:
-            profiles_to_follow = Profile.objects.filter(id__in=profile_id_list)
-            profile.followed_authors.add(*profiles_to_follow)
+            ids_to_follow = Profile.objects.filter(id__in=profile_id_list).values_list("id", flat=True)
+            profile.followed_authors.add(*ids_to_follow)
 
         if story_location_id_list:
-            locations_to_follow = StoryLocations.objects.filter(
+            ids_to_follow = StoryLocations.objects.filter(
                 id__in=story_location_id_list,
+            ).values_list(
+                "id",
+                flat=True,
             )
-            profile.followed_locations.add(*locations_to_follow)
+            profile.followed_locations.add(*ids_to_follow)
 
         if story_tag_id_list:
-            tags_to_follow = StoryTags.objects.filter(id__in=story_tag_id_list)
-            profile.followed_tags.add(*tags_to_follow)
+            ids_to_follow = StoryTags.objects.filter(id__in=story_tag_id_list).values_list("id", flat=True)
+            profile.followed_tags.add(*ids_to_follow)
 
     def unfollow_with_profile(self, profile, validated_data):
         id_lists = self.get_id_lists(validated_data)
@@ -79,17 +82,23 @@ class FollowUnfollowSerializer(serializers.Serializer):
         story_tag_id_list = id_lists["story_tag_id_list"]
 
         if profile_id_list:
-            profiles_to_unfollow = Profile.objects.filter(id__in=profile_id_list)
-            profile.followed_authors.remove(*profiles_to_unfollow)
+            ids_to_unfollow = Profile.objects.filter(id__in=profile_id_list).values_list("id", flat=True)
+            profile.followed_authors.remove(*ids_to_unfollow)
 
         if story_location_id_list:
-            locations_to_unfollow = StoryLocations.objects.filter(
+            ids_to_unfollow = StoryLocations.objects.filter(
                 id__in=story_location_id_list
+            ).values_list(
+                "id",
+                flat=True,
             )
-            profile.followed_locations.remove(*locations_to_unfollow)
+            profile.followed_locations.remove(*ids_to_unfollow)
 
         if story_tag_id_list:
-            tags_to_unfollow = StoryTags.objects.filter(
+            ids_to_unfollow = StoryTags.objects.filter(
                 id__in=story_tag_id_list,
+            ).values_list(
+                "id",
+                flat=True,
             )
-            profile.followed_tags.remove(*tags_to_unfollow)
+            profile.followed_tags.remove(*ids_to_unfollow)
