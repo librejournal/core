@@ -115,6 +115,10 @@ class StoryTags(TimeStampedModel):
         blank=True,
     )
 
+    @property
+    def representation(self):
+        return f"StoryTag(id={self.id}, tag={self.tag}, created_by_id={self.created_by_id})"
+
     def save(self, *args, **kwargs):
         if not self.created_by:
             system_profile = User.get_system_user().profile
@@ -140,6 +144,17 @@ class StoryLocations(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    @property
+    def representation(self):
+        return "StoryLocations(id=%s, country=%s, city=%s, province_1=%s, province_2=%s, created_by_id=%s)" % (
+            self.id,
+            self.country,
+            self.city,
+            self.province_1,
+            self.province_2,
+            self.created_by_id,
+        )
 
     def save(self, *args, **kwargs):
         if not self.created_by:
