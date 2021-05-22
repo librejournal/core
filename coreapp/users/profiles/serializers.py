@@ -5,7 +5,7 @@ from rest_framework import serializers
 from coreapp.users.models import Profile, PROFILE_TYPE_CHOICES
 from coreapp.users.serializers import UserSerializer, TinyUserSerializer
 from coreapp.stories.models import StoryLocations, StoryTags
-from coreapp.stories.serializers import StoryLocationSerializer
+from coreapp.stories.serializers import StoryLocationSerializer, StoryTagsSerializer
 
 User = get_user_model()
 
@@ -23,9 +23,10 @@ class TinyProfileSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class DetailedProfileSerializer(serializers.ModelSerializer):
     followed_authors = TinyProfileSerializer(many=True, read_only=True)
     followed_locations = StoryLocationSerializer(many=True, read_only=True)
+    followed_tags = StoryTagsSerializer(many=True, read_only=True)
     user = UserSerializer(read_only=True)
 
     class Meta:
@@ -37,6 +38,21 @@ class ProfileSerializer(serializers.ModelSerializer):
             "user",
             "followed_locations",
             "followed_authors",
+            "followed_tags",
+        ]
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = [
+            "id",
+            "uuid",
+            "type",
+            "user",
+            "followed_locations",
+            "followed_authors",
+            "followed_tags",
         ]
 
 

@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from coreapp.users.models import Profile
 from coreapp.users.profiles.serializers import (
+    DetailedProfileSerializer,
     ProfileSerializer,
     FollowUnfollowSerializer,
 )
@@ -33,9 +34,12 @@ class ProfileView(viewsets.GenericViewSet):
             return self.serializer_classes[self.action]
         return super().get_serializer_class()
 
-    def _profile_response_with_pk(self, profile_pk):
+    def _profile_response(self, profile_pk, serializer_class):
+        def _get_serializer(*args, **kwargs):
+            kwargs.setdefault('context', self.get_serializer_context())
+            return serializer_class(*args, **kwargs)
         profile = get_object_or_404(Profile, pk=profile_pk)
-        serializer = self.get_serializer(profile)
+        serializer = _get_serializer(profile)
         serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -50,7 +54,7 @@ class ProfileView(viewsets.GenericViewSet):
     def profile_with_pk(self, request, *args, **kwargs):
         # api/profile/<id>/detail GET
         profile_pk = kwargs.get("pk")
-        return self._profile_response_with_pk(profile_pk)
+        return self._profile_response(profile_pk, ProfileSerializer)
 
     @action(
         methods=[
@@ -71,7 +75,7 @@ class ProfileView(viewsets.GenericViewSet):
             "id",
             None,
         )
-        return self._profile_response_with_pk(profile_pk)
+        return self._profile_response(profile_pk, DetailedProfileSerializer)
 
     @action(
         methods=[
