@@ -110,6 +110,10 @@ class Profile(TimeStampedModel):
         "stories.StoryLocations",
         related_name="followed_by",
     )
+    followed_tags = models.ManyToManyField(
+        "stories.StoryTags",
+        related_name="followed_by",
+    )
     followed_authors = models.ManyToManyField("self", related_name="followed_by")
 
     def __str__(self):
