@@ -40,7 +40,6 @@ class ProfileView(viewsets.GenericViewSet):
             return serializer_class(*args, **kwargs)
         profile = get_object_or_404(Profile, pk=profile_pk)
         serializer = _get_serializer(profile)
-        serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(

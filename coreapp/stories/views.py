@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from coreapp.stories import serializers as story_serializers
 from coreapp.stories import models as story_models
-from coreapp.stories.view_mixins import StoryMixin, LikeDislikeView
+from coreapp.stories.view_mixins import StoryMixin, LikeDislikeView, RequestUserProfileMixin
 
 
 class StoryCommentViewSet(ModelViewSet, StoryMixin):
@@ -65,6 +65,18 @@ class StoryViewSet(ModelViewSet):
 
     def get_permissions(self):
         return [permission() for permission in self.get_permission_classes()]
+
+
+class DraftStoryViewSet(StoryViewSet, RequestUserProfileMixin):
+    lookup_url_kwarg = "draft_story_id"
+
+    def get_queryset(self):
+        request_user_profile = self.profile
+        assert request_user_profile is not None
+        return story_models.Story.objects.filter(
+            author=request_user_profile,
+            is_draft=True,
+        )
 
 
 class StoryComponentViewSet(ModelViewSet, StoryMixin):
@@ -150,12 +162,12 @@ class PublishStoryView(GenericAPIView, StoryMixin):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ListDraftStories(ListAPIView):
+class ListDraftStories(ListAPIView, RequestUserProfileMixin):
     permission_classes = [IsAuthenticated]
     serializer_class = story_serializers.RenderStorySerializer
 
     def get_queryset(self):
-        request_user_profile = getattr(self.request.user, "profile", None)
+        request_user_profile = self.profile
         assert request_user_profile is not None
         return story_models.Story.objects.filter(
             author=request_user_profile,

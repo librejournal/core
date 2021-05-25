@@ -65,16 +65,48 @@ comments_detail = views.StoryCommentViewSet.as_view(
     }
 )
 
+draft_story_list = views.DraftStoryViewSet.as_view(
+    {
+        "get": "list",
+    }
+)
+
+draft_story_detail = views.DraftStoryViewSet.as_view(
+    {
+        "put": "update",
+        "patch": "partial_update",
+        "delete": "destroy",
+        "get": "retrieve",
+    }
+)
+
+draft_story_urls = [
+    # api/stories/drafts
+    path(
+        "drafts/",
+        include(
+            [
+                path(
+                    "",
+                    draft_story_list,
+                    name="draft-story-list",
+                ),
+                path(
+                    "<int:draft_story_id>",
+                    draft_story_detail,
+                    name="draft-story-detail",
+                )
+            ]
+        )
+    )
+]
+
 stories_root_urls_list = [
     # api/stories/
     path("tags", story_tag_list_create, name="story-tag-list-create"),
     path("locations", story_tag_list_create, name="story-tag-list-create"),
     path("", story_list_create, name="story-list-create"),  # added to api spec doc
-    path(
-        "drafts",
-        views.ListDraftStories.as_view(),
-        name="list-draft-stories-view",
-    ),
+    *draft_story_urls,
 ]
 
 components_urls_list = [

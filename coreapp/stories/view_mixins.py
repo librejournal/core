@@ -3,6 +3,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 
+class RequestUserProfileMixin:
+    @property
+    def profile_id(self):
+        return getattr(self.request.user, "profile_id", None)
+
+    @property
+    def profile(self):
+        return getattr(self.request.user, "profile", None)
 
 class StoryMixin:
     @property
