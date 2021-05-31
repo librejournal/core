@@ -87,6 +87,11 @@ class StoryComponentViewSet(ModelViewSet, StoryMixin):
     lookup_field = "id"
     lookup_url_kwarg = "id"
 
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return story_serializers.StoryComponentRenderSerializer
+        return story_serializers.StoryComponentSerializer
+
     def get_queryset(self):
         assert self.story_id is not None
         return story_models.StoryComponent.objects.filter(

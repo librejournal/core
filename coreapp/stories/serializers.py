@@ -51,7 +51,10 @@ class StoryLocationSerializer(serializers.ModelSerializer):
 class StoryComponentSerializer(serializers.ModelSerializer):
     type = serializers.ChoiceField(choices=models.StoryComponent.TYPE_CHOICES)
     type_setting = serializers.CharField(required=True)
-    picture = PictureSerializer(required=False)
+    picture = serializers.PrimaryKeyRelatedField(
+        queryset=Picture.objects.all(),
+        required=False,
+    )
 
     class Meta:
         model = models.StoryComponent
@@ -60,6 +63,7 @@ class StoryComponentSerializer(serializers.ModelSerializer):
             "order_id",
             "story",
             "text",
+            "picture",
             "type",
             "type_setting",
         ]
@@ -67,6 +71,13 @@ class StoryComponentSerializer(serializers.ModelSerializer):
             "id",
             "order_id",
         ]
+
+
+class StoryComponentRenderSerializer(StoryComponentSerializer):
+    picture = PictureSerializer(read_only=True)
+
+    class Meta(StoryComponentSerializer.Meta):
+        pass
 
 
 class StoryComponentOrderSerializer(serializers.Serializer):
@@ -199,7 +210,7 @@ class RenderStorySerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     tags = StoryTagsSerializer(read_only=True, many=True)
     locations = StoryLocationSerializer(read_only=True, many=True)
-    components = StoryComponentSerializer(read_only=True, many=True)
+    components = StoryComponentRenderSerializer(read_only=True, many=True)
     thumbnail = PictureSerializer(read_only=True)
     can_user_like = serializers.SerializerMethodField()
     can_user_dislike = serializers.SerializerMethodField()
