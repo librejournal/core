@@ -3,11 +3,13 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from coreapp.stories import models
+from coreapp.files.models import Picture
 from coreapp.users.models import (
     Profile,
 )
 
 from coreapp.utils.global_request import get_current_request
+from coreapp.files.serializers import PictureSerializer
 
 User = get_user_model()
 
@@ -49,6 +51,7 @@ class StoryLocationSerializer(serializers.ModelSerializer):
 class StoryComponentSerializer(serializers.ModelSerializer):
     type = serializers.ChoiceField(choices=models.StoryComponent.TYPE_CHOICES)
     type_setting = serializers.CharField(required=True)
+    picture = PictureSerializer(required=False)
 
     class Meta:
         model = models.StoryComponent
@@ -135,6 +138,10 @@ class StorySerializer(serializers.ModelSerializer):
         required=False,
         many=True,
     )
+    thumbnail = serializers.PrimaryKeyRelatedField(
+        queryset=Picture.objects.all(),
+        required=False,
+    )
 
     can_user_like = serializers.SerializerMethodField()
     can_user_dislike = serializers.SerializerMethodField()
@@ -153,6 +160,8 @@ class StorySerializer(serializers.ModelSerializer):
             "tags",
             "locations",
             "components",
+            "thumbnail",
+            "title",
             "can_user_like",
             "can_user_dislike",
             "like_count",
@@ -191,6 +200,7 @@ class RenderStorySerializer(serializers.ModelSerializer):
     tags = StoryTagsSerializer(read_only=True, many=True)
     locations = StoryLocationSerializer(read_only=True, many=True)
     components = StoryComponentSerializer(read_only=True, many=True)
+    thumbnail = PictureSerializer(read_only=True)
     can_user_like = serializers.SerializerMethodField()
     can_user_dislike = serializers.SerializerMethodField()
     like_count = serializers.IntegerField(read_only=True, default=0)
@@ -208,6 +218,8 @@ class RenderStorySerializer(serializers.ModelSerializer):
             "tags",
             "locations",
             "components",
+            "thumbnail",
+            "title",
             "can_user_like",
             "can_user_dislike",
             "like_count",

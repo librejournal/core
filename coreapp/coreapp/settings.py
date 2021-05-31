@@ -32,7 +32,7 @@ SECRET_KEY = "django-insecure-rbvoas0kdcu-h0nyy0o5axjj20-%ueimcant=4zpe)z#7=7exc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -193,9 +193,11 @@ ENABLE_SMS = bool(os.environ.get("ENABLE_SMS", False))
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://files:5000",
 ]
 
 from .settings_utils import SERVICE_CONSTANTS
 
 # Accepts requests with this header as internal requests
 SERVICES = SERVICE_CONSTANTS
+THIS_SERVICE_ACCESS_TOKEN = SERVICES["core"]["access_token"]

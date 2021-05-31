@@ -8,7 +8,8 @@ from model_utils.models import TimeStampedModel
 
 
 class AbstractFile(TimeStampedModel):
-    attachment_uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4)
+    data = models.BinaryField()
 
     class Meta:
         abstract = True

@@ -18,6 +18,10 @@ class Story(TimeStampedModel):
     tags = models.ManyToManyField("stories.StoryTags")
     locations = models.ManyToManyField("stories.StoryLocations")
     is_draft = models.BooleanField(default=True)
+    title = models.CharField(max_length=1000, null=True, blank=True)
+    thumbnail = models.ForeignKey(
+        "files.Picture", related_name="stories", on_delete=models.CASCADE, null=True, blank=True,
+    )
 
     @cached_property
     def like_count(self):
@@ -88,6 +92,9 @@ class StoryComponent(TimeStampedModel):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     story = models.ForeignKey(
         Story, on_delete=models.CASCADE, related_name="components"
+    )
+    picture = models.ForeignKey(
+        "files.Picture", on_delete=models.CASCADE, related_name="components", null=True, blank=True,
     )
     text = models.TextField()
     # type = TEXT / TITLE / IMAGE - CharField(Enum)
