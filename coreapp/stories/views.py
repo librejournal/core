@@ -13,12 +13,20 @@ from coreapp.stories.view_mixins import StoryMixin, LikeDislikeView, RequestUser
 
 
 class StoryCommentViewSet(ModelViewSet, StoryMixin):
-    serializer_class = story_serializers.StoryCommentSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
     lookup_field = "id"
     lookup_url_kwarg = "id"
-    queryset = story_models.Comment.objects.all()
+
+    def get_queryset(self):
+        return story_models.Comment.objects.filter(
+            story_id=self.story_id,
+        )
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return story_serializers.StoryCommentRenderSerializer
+        return story_serializers.StoryCommentSerializer
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()

@@ -130,6 +130,17 @@ class StoryCommentSerializer(serializers.ModelSerializer):
             return False
         return obj.can_user_dislike(self.request_user_profile)
 
+class StoryCommentRenderSerializer(StoryCommentSerializer):
+    author = serializers.SerializerMethodField()
+
+    def get_author(self, obj):
+        from coreapp.users.profiles.serializers import TinyProfileSerializer
+        serializer = TinyProfileSerializer(obj.author)
+        return serializer.data
+
+    class Meta(StoryCommentSerializer.Meta):
+        pass
+
 
 class StorySerializer(serializers.ModelSerializer):
     # creation and update only...
