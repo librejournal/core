@@ -10,7 +10,6 @@ from coreapp.users.models import (
     TOKEN_TYPE_CHOICES,
     UserVerification,
     Profile,
-    UserStatisticts,
 )
 
 User = get_user_model()
@@ -153,9 +152,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
         # Create a profile as reader
         Profile.objects.get_or_create(user=user)
-
-        # Create user statistics object
-        UserStatisticts.objects.get_or_create(user=user)
 
         return user
 

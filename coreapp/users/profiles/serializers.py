@@ -10,8 +10,16 @@ from coreapp.stories.serializers import StoryLocationSerializer, StoryTagsSerial
 User = get_user_model()
 
 
+def _get_profile_score(serializer, profile):
+    score_from_context = serializer.context.get("profile_score", None)
+    if score_from_context:
+        return score_from_context
+    return getattr(profile, "weighted_profile_score", None)
+
+
 class TinyProfileSerializer(serializers.ModelSerializer):
     user = TinyUserSerializer(read_only=True)
+    score = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -19,8 +27,12 @@ class TinyProfileSerializer(serializers.ModelSerializer):
             "id",
             "uuid",
             "type",
+            "score",
             "user",
         ]
+
+    def get_score(self, obj):
+        return _get_profile_score(self, obj)
 
 
 class DetailedProfileSerializer(serializers.ModelSerializer):
@@ -28,6 +40,7 @@ class DetailedProfileSerializer(serializers.ModelSerializer):
     followed_locations = StoryLocationSerializer(many=True, read_only=True)
     followed_tags = StoryTagsSerializer(many=True, read_only=True)
     user = UserSerializer(read_only=True)
+    score = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -35,11 +48,15 @@ class DetailedProfileSerializer(serializers.ModelSerializer):
             "id",
             "uuid",
             "type",
+            "score",
             "user",
             "followed_locations",
             "followed_authors",
             "followed_tags",
         ]
+
+    def get_score(self, obj):
+        return _get_profile_score(self, obj)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -57,9 +74,15 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class FollowUnfollowSerializer(serializers.Serializer):
-    profile_id_list = serializers.ListField(child=serializers.IntegerField(), required=False)
-    story_location_id_list = serializers.ListField(child=serializers.IntegerField(), required=False)
-    story_tag_id_list = serializers.ListField(child=serializers.IntegerField(), required=False)
+    profile_id_list = serializers.ListField(
+        child=serializers.IntegerField(), required=False
+    )
+    story_location_id_list = serializers.ListField(
+        child=serializers.IntegerField(), required=False
+    )
+    story_tag_id_list = serializers.ListField(
+        child=serializers.IntegerField(), required=False
+    )
 
     def get_id_lists(self, validated_data):
         return {
@@ -75,7 +98,9 @@ class FollowUnfollowSerializer(serializers.Serializer):
         story_tag_id_list = id_lists["story_tag_id_list"]
 
         if profile_id_list:
-            ids_to_follow = Profile.objects.filter(id__in=profile_id_list).values_list("id", flat=True)
+            ids_to_follow = Profile.objects.filter(id__in=profile_id_list).values_list(
+                "id", flat=True
+            )
             profile.followed_authors.add(*ids_to_follow)
 
         if story_location_id_list:
@@ -88,7 +113,9 @@ class FollowUnfollowSerializer(serializers.Serializer):
             profile.followed_locations.add(*ids_to_follow)
 
         if story_tag_id_list:
-            ids_to_follow = StoryTags.objects.filter(id__in=story_tag_id_list).values_list("id", flat=True)
+            ids_to_follow = StoryTags.objects.filter(
+                id__in=story_tag_id_list
+            ).values_list("id", flat=True)
             profile.followed_tags.add(*ids_to_follow)
 
     def unfollow_with_profile(self, profile, validated_data):
@@ -98,7 +125,9 @@ class FollowUnfollowSerializer(serializers.Serializer):
         story_tag_id_list = id_lists["story_tag_id_list"]
 
         if profile_id_list:
-            ids_to_unfollow = Profile.objects.filter(id__in=profile_id_list).values_list("id", flat=True)
+            ids_to_unfollow = Profile.objects.filter(
+                id__in=profile_id_list
+            ).values_list("id", flat=True)
             profile.followed_authors.remove(*ids_to_unfollow)
 
         if story_location_id_list:

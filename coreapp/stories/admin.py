@@ -61,9 +61,11 @@ class StoryTagAdmin(admin.ModelAdmin):
         obj.created_by = sys_profile
         super().save_model(request, obj, form, change)
 
+
 class StoryComponentInline(admin.TabularInline):
     model = story_models.StoryComponent
     readonly_fields = ["uuid"]
+
 
 class StoryTagM2MInline(admin.TabularInline):
     model = story_models.Story.tags.through
@@ -77,7 +79,9 @@ class StoryTagM2MInline(admin.TabularInline):
 
     def representation(self, obj):
         return obj.storytags.representation
+
     representation.short_description = "Story Tag Representation"
+
 
 class StoryLocationM2MInline(admin.TabularInline):
     model = story_models.Story.locations.through
@@ -91,7 +95,9 @@ class StoryLocationM2MInline(admin.TabularInline):
 
     def representation(self, obj):
         return obj.storylocations.representation
+
     representation.short_description = "Story Tag Representation"
+
 
 class StoryAdmin(admin.ModelAdmin):
     model = story_models.Story
@@ -108,6 +114,7 @@ class StoryAdmin(admin.ModelAdmin):
     readonly_fields = [
         "uuid",
     ]
+
 
 admin.site.register(story_models.Story, StoryAdmin)
 admin.site.register(story_models.StoryLocations, StoryLocationAdmin)

@@ -6,29 +6,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('files', '0002_auto_20210501_1529'),
+        ("files", "0002_auto_20210501_1529"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='file',
-            old_name='attachment_uuid',
-            new_name='uuid',
+            model_name="file",
+            old_name="attachment_uuid",
+            new_name="uuid",
         ),
         migrations.RenameField(
-            model_name='picture',
-            old_name='attachment_uuid',
-            new_name='uuid',
+            model_name="picture",
+            old_name="attachment_uuid",
+            new_name="uuid",
         ),
         migrations.AddField(
-            model_name='file',
-            name='data',
+            model_name="file",
+            name="data",
             field=models.BinaryField(),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='picture',
-            name='data',
+            model_name="picture",
+            name="data",
             field=models.BinaryField(),
             preserve_default=False,
         ),

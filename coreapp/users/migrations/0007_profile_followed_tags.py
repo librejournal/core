@@ -6,14 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0013_auto_20210521_1839'),
-        ('users', '0006_auto_20210501_1529'),
+        ("stories", "0013_auto_20210521_1839"),
+        ("users", "0006_auto_20210501_1529"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='followed_tags',
-            field=models.ManyToManyField(related_name='followed_by', to='stories.StoryTags'),
+            model_name="profile",
+            name="followed_tags",
+            field=models.ManyToManyField(
+                related_name="followed_by", to="stories.StoryTags"
+            ),
         ),
     ]

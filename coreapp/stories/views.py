@@ -1,5 +1,6 @@
 import copy
 
+from django.db.models import F
 from django.utils.functional import cached_property
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,7 +10,11 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from coreapp.stories import serializers as story_serializers
 from coreapp.stories import models as story_models
-from coreapp.stories.view_mixins import StoryMixin, LikeDislikeView, RequestUserProfileMixin
+from coreapp.stories.view_mixins import (
+    StoryMixin,
+    LikeDislikeView,
+    RequestUserProfileMixin,
+)
 
 
 class StoryCommentViewSet(ModelViewSet, StoryMixin):
@@ -59,7 +64,12 @@ class StoryViewSet(ModelViewSet):
     pagination_class = None
     lookup_field = "id"
     lookup_url_kwarg = "story_id"
-    queryset = story_models.Story.objects.filter(is_draft=False)
+
+    def get_queryset(self):
+        qs = story_models.Story.objects.filter(is_draft=False)
+        return qs.annotate(
+            profile_score=F("author__profilestatistics__reputation"),
+        )
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -187,17 +197,21 @@ class ListDraftStories(ListAPIView, RequestUserProfileMixin):
             is_draft=True,
         )
 
+
 class StoryLikeView(LikeDislikeView):
     action_type = "like"
     object_type = "story"
+
 
 class StoryDislikeView(LikeDislikeView):
     action_type = "dislike"
     object_type = "story"
 
+
 class CommentLikeView(LikeDislikeView):
     action_type = "like"
     object_type = "comment"
+
 
 class CommentDislikeView(LikeDislikeView):
     action_type = "dislike"

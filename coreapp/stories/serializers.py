@@ -130,11 +130,13 @@ class StoryCommentSerializer(serializers.ModelSerializer):
             return False
         return obj.can_user_dislike(self.request_user_profile)
 
+
 class StoryCommentRenderSerializer(StoryCommentSerializer):
     author = serializers.SerializerMethodField()
 
     def get_author(self, obj):
         from coreapp.users.profiles.serializers import TinyProfileSerializer
+
         serializer = TinyProfileSerializer(obj.author)
         return serializer.data
 
@@ -269,7 +271,9 @@ class RenderStorySerializer(serializers.ModelSerializer):
     def get_author(self, obj):
         from coreapp.users.profiles.serializers import TinyProfileSerializer
 
-        return TinyProfileSerializer(obj.author).data
+        return TinyProfileSerializer(
+            obj.author, context={"profile_score": obj.profile_score}
+        ).data
 
     def get_can_user_like(self, obj):
         if isinstance(obj, dict) or self.is_public_user:

@@ -95,9 +95,9 @@ draft_story_urls = [
                     "<int:draft_story_id>",
                     draft_story_detail,
                     name="draft-story-detail",
-                )
+                ),
             ]
-        )
+        ),
     )
 ]
 
@@ -164,12 +164,12 @@ comments_urls_list = [
                                 "dislike",
                                 views.CommentDislikeView.as_view(),
                                 name="story-comments-like",
-                            )
+                            ),
                         ]
-                    )
-                )
+                    ),
+                ),
             ]
-        )
+        ),
     )
 ]
 

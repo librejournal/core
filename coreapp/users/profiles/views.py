@@ -36,8 +36,9 @@ class ProfileView(viewsets.GenericViewSet):
 
     def _profile_response(self, profile_pk, serializer_class):
         def _get_serializer(*args, **kwargs):
-            kwargs.setdefault('context', self.get_serializer_context())
+            kwargs.setdefault("context", self.get_serializer_context())
             return serializer_class(*args, **kwargs)
+
         profile = get_object_or_404(Profile, pk=profile_pk)
         serializer = _get_serializer(profile)
         return Response(data=serializer.data, status=status.HTTP_200_OK)

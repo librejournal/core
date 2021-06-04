@@ -20,7 +20,11 @@ class Story(TimeStampedModel):
     is_draft = models.BooleanField(default=True)
     title = models.CharField(max_length=1000, null=True, blank=True)
     thumbnail = models.ForeignKey(
-        "files.Picture", related_name="stories", on_delete=models.CASCADE, null=True, blank=True,
+        "files.Picture",
+        related_name="stories",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
 
     @cached_property
@@ -94,7 +98,11 @@ class StoryComponent(TimeStampedModel):
         Story, on_delete=models.CASCADE, related_name="components"
     )
     picture = models.ForeignKey(
-        "files.Picture", on_delete=models.CASCADE, related_name="components", null=True, blank=True,
+        "files.Picture",
+        on_delete=models.CASCADE,
+        related_name="components",
+        null=True,
+        blank=True,
     )
     text = models.TextField()
     # type = TEXT / TITLE / IMAGE - CharField(Enum)
@@ -261,6 +269,17 @@ class StoryLikes(TimeStampedModel):
         "users.Profile", on_delete=models.CASCADE, related_name="story_likes"
     )
 
+    def _update_profile_stats(self):
+        profile = self.author
+        score = profile.weighted_profile_score
+        profile_stats = profile.profilestatistics
+        profile_stats.reputation = score
+        profile_stats.save()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self._update_profile_stats()
+
 
 class CommentLikes(TimeStampedModel):
     is_like = models.BooleanField(default=True, db_index=True)
@@ -268,3 +287,14 @@ class CommentLikes(TimeStampedModel):
     author = models.ForeignKey(
         "users.Profile", on_delete=models.CASCADE, related_name="comment_likes"
     )
+
+    def _update_profile_stats(self):
+        profile = self.author
+        score = profile.weighted_profile_score
+        profile_stats = profile.profilestatistics
+        profile_stats.reputation = score
+        profile_stats.save()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self._update_profile_stats()

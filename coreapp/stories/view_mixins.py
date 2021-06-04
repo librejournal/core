@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 
+
 class RequestUserProfileMixin:
     @property
     def profile_id(self):
@@ -12,6 +13,7 @@ class RequestUserProfileMixin:
     def profile(self):
         return getattr(self.request.user, "profile", None)
 
+
 class StoryMixin:
     @property
     def story_id(self):
@@ -20,7 +22,9 @@ class StoryMixin:
     @property
     def story(self):
         from coreapp.stories.models import Story
+
         return Story.objects.filter(id=self.story_id).first()
+
 
 class LikeDislikeView(GenericAPIView, StoryMixin):
     from coreapp.stories.serializers import LikeDislikeSerializer
@@ -42,6 +46,7 @@ class LikeDislikeView(GenericAPIView, StoryMixin):
     @property
     def comment(self):
         from coreapp.stories.models import Comment
+
         return Comment.objects.filter(id=self.comment_id).first()
 
     @property
@@ -54,6 +59,7 @@ class LikeDislikeView(GenericAPIView, StoryMixin):
     @property
     def dynamic_permission_classes(self):
         from coreapp.stories.permissions import CanLikeObject, CanDislikeObject
+
         classes = [IsAuthenticated]
         if self.action_type == "like":
             classes.append(CanLikeObject)
