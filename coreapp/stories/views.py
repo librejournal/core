@@ -1,6 +1,9 @@
 import copy
 
+from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
+from django.contrib.postgres.search import SearchVector
 from django.db.models import F, Subquery, OuterRef, Count
+from django.db.models.functions import Concat
 from django.utils.functional import cached_property
 from django_filters import rest_framework as filters
 from rest_framework import status
@@ -104,9 +107,12 @@ class StoryViewSet(ModelViewSet):
     filterset_class = StoryFilter
     filter_backends = (filters.DjangoFilterBackend,)
 
+    @property
+    def non_draft_story_qs(self):
+        return story_models.Story.objects.filter(is_draft=False)
+
     def get_queryset(self):
-        qs = story_models.Story.objects.filter(is_draft=False)
-        return qs.annotate(
+        return self.non_draft_story_qs.annotate(
             profile_score=F("author__profilestatistics__reputation"),
             likes_count=Subquery(
                 story_models.StoryLikes.objects.filter(
@@ -137,6 +143,13 @@ class StoryViewSet(ModelViewSet):
                 .values(
                     "count",
                 )
+            ),
+            tag_search=StringAgg("tags__tag", delimiter="^", distinct=True),
+            location_search=Concat(
+                StringAgg("locations__country", delimiter="^", distinct=True),
+                StringAgg("locations__city", delimiter="^", distinct=True),
+                StringAgg("locations__province_1", delimiter="^", distinct=True),
+                StringAgg("locations__province_2", delimiter="^", distinct=True),
             ),
         )
 
