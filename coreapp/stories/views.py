@@ -16,7 +16,7 @@ from coreapp.stories.view_mixins import (
     LikeDislikeView,
     RequestUserProfileMixin,
 )
-from coreapp.stories.filters import StoryFilter
+from coreapp.stories.filters import StoryFilter, CommentFilter
 
 
 class StoryCommentViewSet(ModelViewSet, StoryMixin):
@@ -25,9 +25,38 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
     lookup_field = "id"
     lookup_url_kwarg = "id"
 
+    filterset_class = CommentFilter
+    filter_backends = (filters.DjangoFilterBackend,)
+
     def get_queryset(self):
         return story_models.Comment.objects.filter(
             story_id=self.story_id,
+        ).annotate(
+            profile_score=F("author__profilestatistics__reputation"),
+            likes_count=Subquery(
+                story_models.CommentLikes.objects.filter(
+                    is_like=True,
+                    story=OuterRef("pk"),
+                ).values(
+                    "story",
+                ).annotate(
+                    count=Count('pk'),
+                ).values(
+                    "count",
+                )
+            ),
+            dislikes_count=Subquery(
+                story_models.CommentLikes.objects.filter(
+                    is_like=False,
+                    story=OuterRef("pk"),
+                ).values(
+                    "story",
+                ).annotate(
+                    count=Count('pk'),
+                ).values(
+                    "count",
+                )
+            ),
         )
 
     def get_serializer_class(self):
