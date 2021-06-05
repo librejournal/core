@@ -4,6 +4,7 @@ from rest_framework.response import Response
 PAGE_SIZE = 100
 MAX_PAGE_SIZE = 200
 
+
 class CustomLimitOffsetPagination(pagination.LimitOffsetPagination):
     default_limit = PAGE_SIZE
     max_limit = MAX_PAGE_SIZE

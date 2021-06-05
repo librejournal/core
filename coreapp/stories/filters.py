@@ -3,6 +3,7 @@ from django_filters import OrderingFilter, BaseInFilter
 
 from coreapp.stories.models import Story, Comment
 
+
 class StoryFilter(filters.FilterSet):
     ordering = OrderingFilter(
         fields=(
@@ -16,6 +17,7 @@ class StoryFilter(filters.FilterSet):
     class Meta:
         model = Story
         fields = "__all__"
+
 
 class CommentFilter(filters.FilterSet):
     ordering = OrderingFilter(

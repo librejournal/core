@@ -30,19 +30,20 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
     filter_backends = (filters.DjangoFilterBackend,)
 
     def get_queryset(self):
-        return story_models.Comment.objects.filter(
-            story_id=self.story_id,
-        ).annotate(
+        return story_models.Comment.objects.filter(story_id=self.story_id,).annotate(
             profile_score=F("author__profilestatistics__reputation"),
             likes_count=Subquery(
                 story_models.CommentLikes.objects.filter(
                     is_like=True,
                     story=OuterRef("pk"),
-                ).values(
+                )
+                .values(
                     "story",
-                ).annotate(
-                    count=Count('pk'),
-                ).values(
+                )
+                .annotate(
+                    count=Count("pk"),
+                )
+                .values(
                     "count",
                 )
             ),
@@ -50,11 +51,14 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
                 story_models.CommentLikes.objects.filter(
                     is_like=False,
                     story=OuterRef("pk"),
-                ).values(
+                )
+                .values(
                     "story",
-                ).annotate(
-                    count=Count('pk'),
-                ).values(
+                )
+                .annotate(
+                    count=Count("pk"),
+                )
+                .values(
                     "count",
                 )
             ),
@@ -108,11 +112,14 @@ class StoryViewSet(ModelViewSet):
                 story_models.StoryLikes.objects.filter(
                     is_like=True,
                     story=OuterRef("pk"),
-                ).values(
+                )
+                .values(
                     "story",
-                ).annotate(
-                    count=Count('pk'),
-                ).values(
+                )
+                .annotate(
+                    count=Count("pk"),
+                )
+                .values(
                     "count",
                 )
             ),
@@ -120,11 +127,14 @@ class StoryViewSet(ModelViewSet):
                 story_models.StoryLikes.objects.filter(
                     is_like=False,
                     story=OuterRef("pk"),
-                ).values(
+                )
+                .values(
                     "story",
-                ).annotate(
-                    count=Count('pk'),
-                ).values(
+                )
+                .annotate(
+                    count=Count("pk"),
+                )
+                .values(
                     "count",
                 )
             ),

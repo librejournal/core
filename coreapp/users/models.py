@@ -17,11 +17,10 @@ from model_utils.choices import Choices
 from rest_framework.authtoken.models import Token
 
 
-WEEKLY_WEIGHT=3
-MONTHLY_WEIGHT=2
-REST_WEIGHT=1
-WEIGHTS_SUM=sum([WEEKLY_WEIGHT, MONTHLY_WEIGHT, REST_WEIGHT])
-
+WEEKLY_WEIGHT = 3
+MONTHLY_WEIGHT = 2
+REST_WEIGHT = 1
+WEIGHTS_SUM = sum([WEEKLY_WEIGHT, MONTHLY_WEIGHT, REST_WEIGHT])
 
 
 TOKEN_TYPE_CHOICES = Choices(
