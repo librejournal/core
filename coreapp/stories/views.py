@@ -1,7 +1,8 @@
 import copy
 
-from django.db.models import F
+from django.db.models import F, Subquery, OuterRef, Count
 from django.utils.functional import cached_property
+from django_filters import rest_framework as filters
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -15,6 +16,7 @@ from coreapp.stories.view_mixins import (
     LikeDislikeView,
     RequestUserProfileMixin,
 )
+from coreapp.stories.filters import StoryFilter
 
 
 class StoryCommentViewSet(ModelViewSet, StoryMixin):
@@ -65,10 +67,37 @@ class StoryViewSet(ModelViewSet):
     lookup_field = "id"
     lookup_url_kwarg = "story_id"
 
+    filterset_class = StoryFilter
+    filter_backends = (filters.DjangoFilterBackend,)
+
     def get_queryset(self):
         qs = story_models.Story.objects.filter(is_draft=False)
         return qs.annotate(
             profile_score=F("author__profilestatistics__reputation"),
+            likes_count=Subquery(
+                story_models.StoryLikes.objects.filter(
+                    is_like=True,
+                    story=OuterRef("pk"),
+                ).values(
+                    "story",
+                ).annotate(
+                    count=Count('pk'),
+                ).values(
+                    "count",
+                )
+            ),
+            dislikes_count=Subquery(
+                story_models.StoryLikes.objects.filter(
+                    is_like=False,
+                    story=OuterRef("pk"),
+                ).values(
+                    "story",
+                ).annotate(
+                    count=Count('pk'),
+                ).values(
+                    "count",
+                )
+            ),
         )
 
     def get_serializer_class(self):

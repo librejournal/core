@@ -226,9 +226,6 @@ class Profile(TimeStampedModel):
             self.weighted_story_likes_average * 2 + self.weighted_comment_likes_average
         ) / 3
 
-    def __str__(self):
-        return f"User(username={self.user.username}) Profile"
-
     def _create_profile_statistics(self):
         stats = getattr(self, "profilestatistics", None)
         if not stats:
@@ -238,6 +235,9 @@ class Profile(TimeStampedModel):
     @property
     def profile_statistics(self):
         return self._create_profile_statistics()
+
+    def __str__(self):
+        return f"User(username={self.user.username}) Profile"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
