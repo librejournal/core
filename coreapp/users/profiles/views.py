@@ -12,6 +12,7 @@ from coreapp.users.profiles.serializers import (
     ProfileSerializer,
     FollowUnfollowSerializer,
 )
+from coreapp.utils.pagination import CustomLimitOffsetPagination
 from coreapp.utils.serializers import EmptySerializer
 
 
@@ -25,6 +26,7 @@ class ProfileView(viewsets.GenericViewSet):
         "follow": FollowUnfollowSerializer,
         "unfollow": FollowUnfollowSerializer,
     }
+    pagination_class = CustomLimitOffsetPagination
 
     def get_serializer_class(self):
         if not isinstance(self.serializer_classes, dict):

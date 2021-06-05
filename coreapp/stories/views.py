@@ -17,11 +17,12 @@ from coreapp.stories.view_mixins import (
     RequestUserProfileMixin,
 )
 from coreapp.stories.filters import StoryFilter, CommentFilter
+from coreapp.utils.pagination import CustomLimitOffsetPagination
 
 
 class StoryCommentViewSet(ModelViewSet, StoryMixin):
     permission_classes = [IsAuthenticated]
-    pagination_class = None
+    pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "id"
 
@@ -74,7 +75,7 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
 class StoryLocationViewSet(ModelViewSet):
     serializer_class = story_serializers.StoryLocationSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None
+    pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "id"
     queryset = story_models.StoryLocations.objects.all()
@@ -83,7 +84,7 @@ class StoryLocationViewSet(ModelViewSet):
 class StoryTagViewSet(ModelViewSet):
     serializer_class = story_serializers.StoryTagsSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None
+    pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "id"
     queryset = story_models.StoryTags.objects.all()
@@ -92,7 +93,7 @@ class StoryTagViewSet(ModelViewSet):
 class StoryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     # Implement pagination class
-    pagination_class = None
+    pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "story_id"
 
@@ -159,7 +160,7 @@ class StoryComponentViewSet(ModelViewSet, StoryMixin):
     serializer_class = story_serializers.StoryComponentSerializer
     permission_classes = [IsAuthenticated]
     # Implement pagination class
-    pagination_class = None
+    pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "id"
 
@@ -241,19 +242,6 @@ class PublishStoryView(GenericAPIView, StoryMixin):
         story.is_draft = False
         story.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class ListDraftStories(ListAPIView, RequestUserProfileMixin):
-    permission_classes = [IsAuthenticated]
-    serializer_class = story_serializers.RenderStorySerializer
-
-    def get_queryset(self):
-        request_user_profile = self.profile
-        assert request_user_profile is not None
-        return story_models.Story.objects.filter(
-            author=request_user_profile,
-            is_draft=True,
-        )
 
 
 class StoryLikeView(LikeDislikeView):

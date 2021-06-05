@@ -13,6 +13,7 @@ from coreapp.users import serializers
 from coreapp.users.models import GenericToken
 from coreapp.users.utils import get_and_authenticate_user
 from coreapp.users.permissions import IsUserNotVerifiedYet, IsUserVerified
+from coreapp.utils.pagination import CustomLimitOffsetPagination
 from coreapp.utils.serializers import EmptySerializer
 
 
@@ -60,6 +61,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         "login": serializers.LoginSerializer,
         "register": serializers.UserRegisterSerializer,
     }
+    pagination_class = CustomLimitOffsetPagination
     permission_classes_override = {
         "logout": [
             IsAuthenticated,
