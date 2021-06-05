@@ -6,11 +6,15 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from django_filters import rest_framework as filters
+
 from coreapp.users.models import Profile
+from coreapp.users.profiles.filters import ProfileFilter
 from coreapp.users.profiles.serializers import (
     DetailedProfileSerializer,
     ProfileSerializer,
     FollowUnfollowSerializer,
+    TinyProfileSerializer,
 )
 from coreapp.utils.pagination import CustomLimitOffsetPagination
 from coreapp.utils.serializers import EmptySerializer
@@ -110,3 +114,13 @@ class ProfileView(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.unfollow_with_profile(profile, serializer.data)
         return Response(status=status.HTTP_200_OK)
+
+class TinyProfileViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+    serializer_class = TinyProfileSerializer
+    pagination_class = CustomLimitOffsetPagination
+
+    filterset_class = ProfileFilter
+    filter_backends = (filters.DjangoFilterBackend,)
