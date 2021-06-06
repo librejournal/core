@@ -1,15 +1,14 @@
 import copy
 
-from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
-from django.contrib.postgres.search import SearchVector
-from django.db.models import F, Subquery, OuterRef, Count
+from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import F, Subquery, OuterRef, Count, Value
 from django.db.models.functions import Concat
 from django.utils.functional import cached_property
 from django_filters import rest_framework as filters
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from coreapp.stories import serializers as story_serializers
@@ -19,7 +18,7 @@ from coreapp.stories.view_mixins import (
     LikeDislikeView,
     RequestUserProfileMixin,
 )
-from coreapp.stories.filters import StoryFilter, CommentFilter
+from coreapp.stories.filters import StoryFilter, CommentFilter, TagFilter, LocationFilter
 from coreapp.utils.pagination import CustomLimitOffsetPagination
 
 
@@ -85,7 +84,23 @@ class StoryLocationViewSet(ModelViewSet):
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "id"
-    queryset = story_models.StoryLocations.objects.all()
+
+    filterset_class = LocationFilter
+    filter_backends = (filters.DjangoFilterBackend,)
+
+    def get_queryset(self):
+        qs = story_models.StoryLocations.objects.all()
+        return qs.annotate(
+            location_search=Concat(
+                F("country"),
+                Value("^"),
+                F("city"),
+                Value("^"),
+                F("province_1"),
+                Value("^"),
+                F("province_2"),
+            ),
+        )
 
 
 class StoryTagViewSet(ModelViewSet):
@@ -95,6 +110,9 @@ class StoryTagViewSet(ModelViewSet):
     lookup_field = "id"
     lookup_url_kwarg = "id"
     queryset = story_models.StoryTags.objects.all()
+
+    filterset_class = TagFilter
+    filter_backends = (filters.DjangoFilterBackend,)
 
 
 class StoryViewSet(ModelViewSet):

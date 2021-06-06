@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
 from django_filters import OrderingFilter, CharFilter
 
-from coreapp.stories.models import Story, Comment
+from coreapp.stories.models import Story, Comment, StoryTags, StoryLocations
 
 
 class StoryFilter(filters.FilterSet):
@@ -34,4 +34,18 @@ class CommentFilter(filters.FilterSet):
 
     class Meta:
         model = Comment
+        fields = ["created"]
+
+class TagFilter(filters.FilterSet):
+    search = CharFilter(field_name="tag", lookup_expr="contains")
+
+    class Meta:
+        model = StoryTags
+        fields = ["created"]
+
+class LocationFilter(filters.FilterSet):
+    search = CharFilter(field_name="location_search", lookup_expr="contains")
+
+    class Meta:
+        model = StoryLocations
         fields = ["created"]
