@@ -37,7 +37,7 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
             likes_count=Subquery(
                 story_models.CommentLikes.objects.filter(
                     is_like=True,
-                    story=OuterRef("pk"),
+                    comment__story=OuterRef("pk"),
                 )
                 .values(
                     "story",
@@ -52,7 +52,7 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
             dislikes_count=Subquery(
                 story_models.CommentLikes.objects.filter(
                     is_like=False,
-                    story=OuterRef("pk"),
+                    comment__story=OuterRef("pk"),
                 )
                 .values(
                     "story",
