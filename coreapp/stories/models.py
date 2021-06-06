@@ -160,7 +160,7 @@ class StoryTags(TimeStampedModel):
 class StoryLocations(TimeStampedModel):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     country = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
+    city = models.CharField(max_length=50, null=True, blank=True)
     province_1 = models.CharField(max_length=50, null=True, blank=True)
     province_2 = models.CharField(max_length=50, null=True, blank=True)
     created_by = models.ForeignKey(
