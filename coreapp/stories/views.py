@@ -37,10 +37,10 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
             likes_count=Subquery(
                 story_models.CommentLikes.objects.filter(
                     is_like=True,
-                    comment__story=OuterRef("pk"),
+                    comment=OuterRef("pk"),
                 )
                 .values(
-                    "story",
+                    "comment",
                 )
                 .annotate(
                     count=Count("pk"),
@@ -52,10 +52,10 @@ class StoryCommentViewSet(ModelViewSet, StoryMixin):
             dislikes_count=Subquery(
                 story_models.CommentLikes.objects.filter(
                     is_like=False,
-                    comment__story=OuterRef("pk"),
+                    comment=OuterRef("pk"),
                 )
                 .values(
-                    "story",
+                    "comment",
                 )
                 .annotate(
                     count=Count("pk"),
