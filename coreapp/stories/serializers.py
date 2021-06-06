@@ -101,6 +101,7 @@ class StoryCommentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "uuid",
+            "created",
             "story",
             "author",
             "text",
@@ -110,6 +111,7 @@ class StoryCommentSerializer(serializers.ModelSerializer):
             "dislike_count",
         ]
         extra_kwargs = {
+            "created": {"read_only": True},
             "story": {"required": False},
             "author": {"required": False},
         }
