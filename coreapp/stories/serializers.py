@@ -271,8 +271,9 @@ class RenderStorySerializer(serializers.ModelSerializer):
     def get_author(self, obj):
         from coreapp.users.profiles.serializers import TinyProfileSerializer
 
+        profile_score = getattr(obj, "profile_score", None)
         return TinyProfileSerializer(
-            obj.author, context={"profile_score": obj.profile_score}
+            obj.author, context={"profile_score": profile_score}
         ).data
 
     def get_can_user_like(self, obj):
