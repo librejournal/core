@@ -126,50 +126,89 @@ class StoryViewSet(ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
 
     @property
-    def non_draft_story_qs(self):
-        return story_models.Story.objects.filter(is_draft=False)
+    def story_qs(self):
+        return story_models.Story.objects.all()
 
-    def get_queryset(self):
-        return self.non_draft_story_qs.annotate(
+    @property
+    def non_draft_story_qs(self):
+        return self.story_qs.filter(is_draft=False)
+
+    def annotate_search_fields(self, qs):
+        if self.request.query_params.get("locations", ""):
+            qs = qs.annotate(
+                location_search=Concat(
+                    StringAgg("locations__country", delimiter="^", distinct=True),
+                    StringAgg("locations__city", delimiter="^", distinct=True),
+                    StringAgg("locations__province_1", delimiter="^", distinct=True),
+                    StringAgg("locations__province_2", delimiter="^", distinct=True),
+                ),
+            )
+
+        if self.request.query_params.get("tags", ""):
+            qs = qs.annotate(
+                tag_search=StringAgg("tags__tag", delimiter="^", distinct=True),
+            )
+
+        return qs
+
+    def annotate_profile_score(self, qs):
+        return qs.annotate(
             profile_score=F("author__profilestatistics__reputation"),
+        )
+
+    def annotate_likes_count(self, qs):
+        return qs.annotate(
             likes_count=Subquery(
                 story_models.StoryLikes.objects.filter(
                     is_like=True,
                     story=OuterRef("pk"),
-                )
-                .values(
+                ).values(
                     "story",
-                )
-                .annotate(
+                ).annotate(
                     count=Count("pk"),
-                )
-                .values(
+                ).values(
                     "count",
                 )
             ),
+        )
+
+    def annotate_dislikes_count(self, qs):
+        return qs.annotate(
             dislikes_count=Subquery(
                 story_models.StoryLikes.objects.filter(
                     is_like=False,
                     story=OuterRef("pk"),
-                )
-                .values(
+                ).values(
                     "story",
-                )
-                .annotate(
+                ).annotate(
                     count=Count("pk"),
-                )
-                .values(
+                ).values(
                     "count",
                 )
             ),
-            tag_search=StringAgg("tags__tag", delimiter="^", distinct=True),
-            location_search=Concat(
-                StringAgg("locations__country", delimiter="^", distinct=True),
-                StringAgg("locations__city", delimiter="^", distinct=True),
-                StringAgg("locations__province_1", delimiter="^", distinct=True),
-                StringAgg("locations__province_2", delimiter="^", distinct=True),
-            ),
         )
+
+    def annotate_ordering_fields(self, qs):
+        ordering_param_value = list(
+            reversed(self.request.query_params.get("ordering", "").split("-"))
+        )[0]
+        if not ordering_param_value:
+            return qs
+
+        if ordering_param_value == "score":
+            qs = self.annotate_profile_score(qs)
+
+        if ordering_param_value == "likes":
+            qs = self.annotate_likes_count(qs)
+
+        if ordering_param_value == "dislikes":
+            qs = self.annotate_dislikes_count(qs)
+
+        return qs
+
+    def get_queryset(self):
+        qs = self.annotate_search_fields(self.non_draft_story_qs)
+        return self.annotate_ordering_fields(qs)
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -195,6 +234,16 @@ class DraftStoryViewSet(StoryViewSet, RequestUserProfileMixin):
             author=request_user_profile,
             is_draft=True,
         )
+
+class MyStoriesViewSet(StoryViewSet, RequestUserProfileMixin):
+    def get_permission_classes(self):
+        return [IsAuthenticated]
+
+    def get_queryset(self):
+        qs = self.story_qs.filter(
+            author=self.profile,
+        )
+        return self.annotate_ordering_fields(qs)
 
 
 class StoryComponentViewSet(ModelViewSet, StoryMixin):

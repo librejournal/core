@@ -19,7 +19,7 @@ class StoryFilter(filters.FilterSet):
 
     class Meta:
         model = Story
-        fields = ["created"]
+        fields = ["created", "is_draft"]
 
 
 class CommentFilter(filters.FilterSet):

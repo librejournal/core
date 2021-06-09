@@ -80,6 +80,12 @@ draft_story_detail = views.DraftStoryViewSet.as_view(
     }
 )
 
+my_stories_list = views.MyStoriesViewSet.as_view(
+    {
+        "get": "list",
+    }
+)
+
 draft_story_urls = [
     # api/stories/drafts
     path(
@@ -105,6 +111,7 @@ stories_root_urls_list = [
     # api/stories/
     path("tags", story_tag_list_create, name="story-tag-list-create"),
     path("locations", story_location_list_create, name="story-tag-list-create"),
+    path("self", my_stories_list, name="my-stories-list"),
     path("", story_list_create, name="story-list-create"),  # added to api spec doc
     *draft_story_urls,
 ]
