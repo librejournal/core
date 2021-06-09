@@ -29,11 +29,12 @@ class LoggedInUserViewSet(viewsets.ModelViewSet):
 
 
 class VerificationView(GenericAPIView):
-    permission_classes = [IsUserNotVerifiedYet]
+    permission_classes = [AllowAny]
     serializer_class = serializers.VerificationSerializer
 
-    def get(self, request, *args, **kwargs):
-        key = self.kwargs.get("token", None)
+    @property
+    def token(self):
+        key = self.request.query_params.get("token", None)
         token = GenericToken.objects.filter(
             key=key,
         ).first()
@@ -41,9 +42,17 @@ class VerificationView(GenericAPIView):
             raise NotFound("Token not found.")
         if not token.is_valid_key:
             raise ValidationError("Token is invalid.")
+        return token
+
+    @property
+    def token_user(self):
+        return self.token.user
+
+    def get(self, request, *args, **kwargs):
+        token = self.token
         user = token.user
         user.verify_user(token)
-        return Response(None, status=status.HTTP_200_OK)
+        return Response(data={"is_verified": True}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

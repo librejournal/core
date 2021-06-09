@@ -32,6 +32,11 @@ if [ -f config/env.sh ]; then
     source config/env.sh
 fi
 
+if [ -f .env ]; then
+  echo "Sourcing .env file..."
+  source .env
+fi
+
 counter=0
 until postgres_ready; do
   >&2 echo 'PostgreSQL is unavailable (sleeping)...'

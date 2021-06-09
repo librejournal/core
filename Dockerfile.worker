@@ -20,4 +20,4 @@ RUN pip install --exists-action w -r requirements/requirements.txt
 
 COPY . ./
 
-CMD celery -A coreapp.coreapp worker -l info
+CMD python manage.py celery_worker

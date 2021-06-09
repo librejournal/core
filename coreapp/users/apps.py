@@ -56,6 +56,11 @@ class UsersConfig(AppConfig):
 
     def ready(self):
         try:
+            import coreapp.users.tasks
+        except ImportError:
+            pass
+
+        try:
             self._create_system_user()
             self._create_service_users_and_tokens()
             self._create_superuser()

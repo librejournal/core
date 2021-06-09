@@ -91,8 +91,8 @@ class User(AbstractUser, TimeStampedModel):
         return self.generic_tokens.create(type=TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION)
 
     def verify_user(self, token):
-        token = self.get_or_create_verification_token()
-        verification = UserVerification.objects.get_or_create(user=self)
+        token = self.get_or_create_verification_token(TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION)
+        verification, _ = UserVerification.objects.get_or_create(user=self)
         if not verification.is_verified:
             if token.type == TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION:
                 verification.email_verified = timezone.now()
@@ -119,7 +119,7 @@ class GenericToken(TimeStampedModel):
 
     @property
     def is_valid_key(self):
-        return timezone.now() + self.valid_until
+        return timezone.now() < self.valid_until
 
     def save(self, *args, **kwargs):
         if not self.key:
@@ -254,7 +254,8 @@ class UserVerification(TimeStampedModel):
         return bool(self.email_verified)
 
     def _send_verification_email(self):
-        from coreapp.users.verification.email import send_simple_verification_mail
+        from coreapp.users.verification.email import build_verification_url
+        from coreapp.users.tasks import send_simple_verification_mail_task
 
         if not settings.ENABLE_EMAILS:
             logger.debug("Emails are not enabled.")
@@ -262,7 +263,9 @@ class UserVerification(TimeStampedModel):
         token = self.user.get_or_create_verification_token(
             TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION
         )
-        send_simple_verification_mail(self.user.email, str(token.key))
+        token_key = str(token.key)
+        verification_url = build_verification_url(token_key)
+        send_simple_verification_mail_task.delay(self.user.email, token_key, verification_url)
 
     def _send_verification_sms(self):
         if not settings.ENABLE_SMS:

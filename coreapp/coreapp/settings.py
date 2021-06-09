@@ -15,6 +15,12 @@ import logging
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from .settings_utils import SERVICE_CONSTANTS, env_to_bool
+
 logger = logging.getLogger(__name__)
 
 ENV = os.environ.get("ENV", "local")
@@ -172,9 +178,10 @@ REST_FRAMEWORK = {
     ]
 }
 
+_sendgrid_api_key = os.environ.get("SENDGRID_API_KEY", "")
 EMAIL_HOST = "smtp.sendgrid.net"
 EMAIL_HOST_USER = "apikey"
-EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_API_KEY", "")
+EMAIL_HOST_PASSWORD = _sendgrid_api_key
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -182,22 +189,22 @@ CELERY_BROKER_URL = os.environ.get(
     "CELERY_BROKER_URL", "amqp://guest:guest@localhost:5672//"
 )
 CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_RESULT_BACKEND", "redis://localhost:6379"
+    "CELERY_RESULT_BACKEND", "redis://redis:6379/0"
 )
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Europe/Istanbul"
 
-ENABLE_EMAILS = bool(os.environ.get("ENABLE_EMAILS", False))
-ENABLE_SMS = bool(os.environ.get("ENABLE_SMS", False))
+_enable_emails = env_to_bool("ENABLE_EMAILS")
+_enable_sms = env_to_bool("ENABLE_SMS")
+ENABLE_EMAILS = _enable_emails is not None and _enable_emails
+ENABLE_SMS = _enable_sms is not None and _enable_sms
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://files:5000",
 ]
-
-from .settings_utils import SERVICE_CONSTANTS
 
 # Accepts requests with this header as internal requests
 SERVICES = SERVICE_CONSTANTS
