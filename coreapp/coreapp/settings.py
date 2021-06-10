@@ -62,9 +62,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -201,9 +201,15 @@ _enable_sms = env_to_bool("ENABLE_SMS")
 ENABLE_EMAILS = _enable_emails is not None and _enable_emails
 ENABLE_SMS = _enable_sms is not None and _enable_sms
 
+from corsheaders.defaults import default_headers
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://files:5000",
+]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-pagination-limit",
+    "x-pagination-offset",
 ]
 
 # Accepts requests with this header as internal requests
