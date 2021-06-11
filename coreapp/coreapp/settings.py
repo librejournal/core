@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "coreapp.monetisation",
     "coreapp.stories",
     "coreapp.users",
+    "coreapp.notifications",
 ]
 
 MIDDLEWARE = [
