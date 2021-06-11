@@ -2,7 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -124,3 +124,81 @@ class TinyProfileViewSet(viewsets.ModelViewSet):
 
     filterset_class = ProfileFilter
     filter_backends = (filters.DjangoFilterBackend,)
+
+class GenericFollowUnFollowView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = FollowUnfollowSerializer
+
+    action_type = None
+
+    @property
+    def profile(self):
+        profile = getattr(self.request.user, "profile", None)
+        if not profile:
+            raise NotFound("Profile not found.")
+        return profile
+
+    def _follow(self):
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.follow_with_profile(self.profile, serializer.data)
+
+    def _unfollow(self):
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.unfollow_with_profile(self.profile, serializer.data)
+
+    def patch(self, request, *args, **kwargs):
+        processor = getattr(self, f"_{self.action_type}", None)
+        processor()
+        return Response(status=status.HTTP_200_OK)
+
+
+class FollowView(GenericFollowUnFollowView):
+    action_type = "follow"
+
+
+class UnfollowView(GenericFollowUnFollowView):
+    action_type = "unfollow"
+
+
+class GenericProfileView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    response_serializer_class = None
+
+    def _get_profile_pk(self):
+        pass
+
+    def _get_serializer(self, *args, **kwargs):
+        kwargs.setdefault("context", self.get_serializer_context())
+        return self.response_serializer_class(*args, **kwargs)
+
+    def _get_profile_response(self):
+        profile_pk = self._get_profile_pk()
+        profile = get_object_or_404(Profile, pk=profile_pk)
+        serializer = self._get_serializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request, *args, **kwargs):
+        return self._get_profile_response()
+
+
+class SelfProfileView(GenericProfileView):
+    response_serializer_class = DetailedProfileSerializer
+
+    def _get_profile_pk(self):
+        return getattr(
+            getattr(
+                self.request.user,
+                "profile",
+                None,
+            ),
+            "id",
+            None,
+        )
+
+class ProfileWithPkView(GenericProfileView):
+    response_serializer_class = ProfileSerializer
+
+    def _get_profile_pk(self):
+        return self.kwargs.get("pk")
