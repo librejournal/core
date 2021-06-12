@@ -7,14 +7,18 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from django_filters import rest_framework as filters
+from rest_framework.viewsets import ModelViewSet
 
-from coreapp.users.models import Profile
+from coreapp.stories.view_mixins import RequestUserProfileMixin
+from coreapp.users.models import Profile, ProfileReferrals, PROFILE_TYPE_CHOICES
 from coreapp.users.profiles.filters import ProfileFilter
+from coreapp.users.profiles.permissions import HasReferralsLeft
 from coreapp.users.profiles.serializers import (
     DetailedProfileSerializer,
     ProfileSerializer,
     FollowUnfollowSerializer,
     TinyProfileSerializer,
+    ReferralSerializer, RenderProfileSerializer, ProfileReferralSerializer,
 )
 from coreapp.utils.pagination import CustomLimitOffsetPagination
 from coreapp.utils.serializers import EmptySerializer
@@ -202,3 +206,44 @@ class ProfileWithPkView(GenericProfileView):
 
     def _get_profile_pk(self):
         return self.kwargs.get("pk")
+
+class AcceptWriterInviteView(GenericAPIView, RequestUserProfileMixin):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, *args, **kwargs):
+        referral = get_object_or_404(ProfileReferrals, to_profile=self.profile, accepted=False)
+        referral.accepted = True
+        self.profile.type = PROFILE_TYPE_CHOICES.WRITER
+        referral.save()
+        self.profile.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+class ProfileReferralsViewSet(ModelViewSet, RequestUserProfileMixin):
+    authentication_classes = [IsAuthenticated]
+    pagination_class = CustomLimitOffsetPagination
+    lookup_field = "id"
+    lookup_url_kwarg = "id"
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return RenderProfileSerializer
+        return ProfileReferralSerializer
+
+    def get_queryset(self):
+        # get request profile's not accepted sent invites
+        return ProfileReferrals.objects.filter(
+            referred_by=self.profile,
+            accepted=False,
+        )
+
+    def create(self, request, *args, **kwargs):
+        if not HasReferralsLeft().has_permission(request, self):
+            return Response(data="No more referrals left...", status=status.HTTP_403_FORBIDDEN)
+        request_data = {**request.data}
+        request_data["referred_by"] = self.profile_id
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(status=status.HTTP_201_CREATED, headers=headers)

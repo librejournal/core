@@ -10,6 +10,7 @@ from coreapp.users.models import (
     TOKEN_TYPE_CHOICES,
     UserVerification,
     Profile,
+    ProfileReferrals,
 )
 
 User = get_user_model()
@@ -44,6 +45,7 @@ class TinyUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     profile_id = serializers.SerializerMethodField()
+    has_pending_referral = serializers.SerializerMethodField()
 
     def get_profile_id(self, obj):
         if isinstance(obj, dict):
@@ -58,6 +60,12 @@ class UserSerializer(serializers.ModelSerializer):
             None,
         )
         return profile_id
+
+    def get_has_pending_referral(self, obj):
+        return ProfileReferrals.objects.filter(
+            to_profile=obj.profile,
+            accepted=False,
+        ).exists()
 
     class Meta:
         model = User

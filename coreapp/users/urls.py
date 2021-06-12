@@ -20,6 +20,20 @@ logged_in_user_detail = LoggedInUserViewSet.as_view(
     {"get": "retrieve"}
 )  # added to api spec doc
 
+profile_referals_list_create = profile_views.ProfileReferralsViewSet.as_view(
+    {
+        "get": "list",
+        "post": "create",
+    }
+)
+
+profile_referals_detail = profile_views.ProfileReferralsViewSet.as_view(
+    {
+        "get": "retrieve",
+        "delete": "destroy",
+    }
+)
+
 auth_urls = [
     path(
         "api/auth",
@@ -43,25 +57,48 @@ logged_in_urls = [
 ]
 
 base_profiles_urls = [
-    path("/follow", profile_views.FollowView.as_view(), name="follow-action-view"),
-    path("/unfollow", profile_views.UnfollowView.as_view(), name="follow-action-view"),
-    path("/self-detail", profile_views.SelfProfileView.as_view(), name="self-profile-view"),
+    path("follow", profile_views.FollowView.as_view(), name="follow-action-view"),
+    path("unfollow", profile_views.UnfollowView.as_view(), name="follow-action-view"),
+    path("self-detail", profile_views.SelfProfileView.as_view(), name="self-profile-view"),
 ]
 
 profile_detail_urls = [
-    path("/detail", profile_views.ProfileWithPkView.as_view(), name="profile-with-pk-view"),
+    path("detail", profile_views.ProfileWithPkView.as_view(), name="profile-with-pk-view"),
+]
+
+base_referral_urls = [
+    path("", profile_referals_list_create, name="referrals-list-create"),
+    path("accept", profile_views.AcceptWriterInviteView.as_view(), name="writer-invite-accept-view"),
+]
+
+referral_detail_urls = [
+    path("", profile_referals_detail, name="referrals-detail"),
 ]
 
 profiles_urls = [
     path(
-        "api/profiles",
+        "api/profiles/",
         include(
             [
                 *base_profiles_urls,
                 path(
-                    "/<int:pk>",
+                    "<int:pk>/",
                     include(
                         profile_detail_urls,
+                    )
+                ),
+                path(
+                    "referrals/",
+                    include(
+                        [
+                            path(
+                                "<int:pk>/",
+                                include(
+                                    referral_detail_urls,
+                                )
+                            ),
+                            *base_referral_urls
+                        ]
                     )
                 )
             ]

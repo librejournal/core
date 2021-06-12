@@ -282,12 +282,14 @@ class UserVerification(TimeStampedModel):
         super().save(*args, **kwargs)
 
 
-class UserReferrals(TimeStampedModel):
-    token = models.CharField(max_length=200)
+class ProfileReferrals(TimeStampedModel):
     referred_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="referrals"
+        Profile, on_delete=models.CASCADE, related_name="referrers"
     )
-    to_email = models.EmailField()
+    to_profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="referees"
+    )
+    accepted = models.BooleanField(default=False)
 
 
 class ProfileStatistics(TimeStampedModel):

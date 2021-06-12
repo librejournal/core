@@ -24,6 +24,7 @@ class Notification(TimeStampedModel):
     )
     type = models.CharField(max_length=50, db_index=True)
     profile = models.ForeignKey("users.Profile", related_name="notifications", on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False, db_index=True)
 
 class StoryNotification(Notification, ModelMessageMixin):
     _message_class = StoryNotificationMessage

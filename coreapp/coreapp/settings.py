@@ -216,3 +216,5 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # Accepts requests with this header as internal requests
 SERVICES = SERVICE_CONSTANTS
 THIS_SERVICE_ACCESS_TOKEN = SERVICES["core"]["access_token"]
+
+MAX_REFERRALS_COUNT = 2

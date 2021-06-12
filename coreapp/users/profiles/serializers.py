@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-from coreapp.users.models import Profile, PROFILE_TYPE_CHOICES
+from coreapp.users.models import Profile, PROFILE_TYPE_CHOICES, ProfileReferrals
 from coreapp.users.serializers import UserSerializer, TinyUserSerializer
 from coreapp.stories.models import StoryLocations, StoryTags
 from coreapp.stories.serializers import StoryLocationSerializer, StoryTagsSerializer
@@ -147,3 +147,28 @@ class FollowUnfollowSerializer(serializers.Serializer):
                 flat=True,
             )
             profile.followed_tags.remove(*ids_to_unfollow)
+
+
+class ReferralSerializer(serializers.Serializer):
+    username = serializers.CharField()
+
+class ProfileReferralSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfileReferrals
+        fields = "__all__"
+        extra_kwargs = {
+            "accepted": {"required": False},
+        }
+
+class RenderProfileSerializer(ProfileReferralSerializer):
+    referred_by = TinyProfileSerializer()
+    to_profile = TinyProfileSerializer()
+
+    class Meta:
+        model = ProfileReferrals
+        fields = [
+            "id",
+            "referred_by",
+            "to_profile",
+            "accepted",
+        ]
