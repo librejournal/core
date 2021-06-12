@@ -1,6 +1,6 @@
 from coreapp.stories.models import Story, Comment
 from coreapp.users.models import Profile
-from coreapp.notifications.models import Notification, StoryNotification
+from coreapp.notifications.models import Notification, StoryNotification, CommentNotification
 
 def profile_queryset_following_tags(story_id):
     story = Story.objects.get(id=story_id)
@@ -96,8 +96,8 @@ class StoryLikeProcessor(GenericNotificationProcessor):
 
 
 class CommentLikeProcessor(GenericNotificationProcessor):
-    notification_model = StoryNotification
-    notification_type = Notification.NOTIFICATION_TYPES.STORY_LIKE
+    notification_model = CommentNotification
+    notification_type = Notification.NOTIFICATION_TYPES.COMMENT_LIKE
     relation_model = Comment
     relation_name = "comment"
 
