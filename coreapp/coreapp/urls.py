@@ -20,4 +20,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("coreapp.users.urls")),
     path("", include("coreapp.stories.urls")),
+    path("", include("coreapp.notifications.urls")),
+    path("", include("coreapp.files.urls")),
 ]
