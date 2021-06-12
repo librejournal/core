@@ -18,7 +18,9 @@ from coreapp.users.profiles.serializers import (
     ProfileSerializer,
     FollowUnfollowSerializer,
     TinyProfileSerializer,
-    ReferralSerializer, RenderProfileSerializer, ProfileReferralSerializer,
+    ReferralSerializer,
+    RenderProfileSerializer,
+    ProfileReferralSerializer,
 )
 from coreapp.utils.pagination import CustomLimitOffsetPagination
 from coreapp.utils.serializers import EmptySerializer
@@ -119,6 +121,7 @@ class ProfileView(viewsets.GenericViewSet):
         serializer.unfollow_with_profile(profile, serializer.data)
         return Response(status=status.HTTP_200_OK)
 
+
 class TinyProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [
         IsAuthenticated,
@@ -128,6 +131,7 @@ class TinyProfileViewSet(viewsets.ModelViewSet):
 
     filterset_class = ProfileFilter
     filter_backends = (filters.DjangoFilterBackend,)
+
 
 class GenericFollowUnFollowView(GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -201,17 +205,21 @@ class SelfProfileView(GenericProfileView):
             None,
         )
 
+
 class ProfileWithPkView(GenericProfileView):
     response_serializer_class = ProfileSerializer
 
     def _get_profile_pk(self):
         return self.kwargs.get("pk")
 
+
 class AcceptWriterInviteView(GenericAPIView, RequestUserProfileMixin):
     permission_classes = [IsAuthenticated]
 
     def post(self, *args, **kwargs):
-        referral = get_object_or_404(ProfileReferrals, to_profile=self.profile, accepted=False)
+        referral = get_object_or_404(
+            ProfileReferrals, to_profile=self.profile, accepted=False
+        )
         referral.accepted = True
         self.profile.type = PROFILE_TYPE_CHOICES.WRITER
         referral.save()
@@ -239,7 +247,9 @@ class ProfileReferralsViewSet(ModelViewSet, RequestUserProfileMixin):
 
     def create(self, request, *args, **kwargs):
         if not HasReferralsLeft().has_permission(request, self):
-            return Response(data="No more referrals left...", status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                data="No more referrals left...", status=status.HTTP_403_FORBIDDEN
+            )
         request_data = {**request.data}
         request_data["referred_by"] = self.profile_id
         serializer = self.get_serializer(data=request_data)

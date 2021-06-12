@@ -91,7 +91,9 @@ class User(AbstractUser, TimeStampedModel):
         return self.generic_tokens.create(type=TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION)
 
     def verify_user(self, token):
-        token = self.get_or_create_verification_token(TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION)
+        token = self.get_or_create_verification_token(
+            TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION
+        )
         verification, _ = UserVerification.objects.get_or_create(user=self)
         if not verification.is_verified:
             if token.type == TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION:
@@ -265,7 +267,9 @@ class UserVerification(TimeStampedModel):
         )
         token_key = str(token.key)
         verification_url = build_verification_url(token_key)
-        send_simple_verification_mail_task.delay(self.user.email, token_key, verification_url)
+        send_simple_verification_mail_task.delay(
+            self.user.email, token_key, verification_url
+        )
 
     def _send_verification_sms(self):
         if not settings.ENABLE_SMS:

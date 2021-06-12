@@ -43,7 +43,7 @@ auth_urls = [
                 path("/logout", LogoutView.as_view(), name="logout-view"),
                 path("/register", RegisterView.as_view(), name="register-view"),
             ]
-        )
+        ),
     )
 ]
 
@@ -59,16 +59,24 @@ logged_in_urls = [
 base_profiles_urls = [
     path("follow", profile_views.FollowView.as_view(), name="follow-action-view"),
     path("unfollow", profile_views.UnfollowView.as_view(), name="follow-action-view"),
-    path("self-detail", profile_views.SelfProfileView.as_view(), name="self-profile-view"),
+    path(
+        "self-detail", profile_views.SelfProfileView.as_view(), name="self-profile-view"
+    ),
 ]
 
 profile_detail_urls = [
-    path("detail", profile_views.ProfileWithPkView.as_view(), name="profile-with-pk-view"),
+    path(
+        "detail", profile_views.ProfileWithPkView.as_view(), name="profile-with-pk-view"
+    ),
 ]
 
 base_referral_urls = [
     path("", profile_referals_list_create, name="referrals-list-create"),
-    path("accept", profile_views.AcceptWriterInviteView.as_view(), name="writer-invite-accept-view"),
+    path(
+        "accept",
+        profile_views.AcceptWriterInviteView.as_view(),
+        name="writer-invite-accept-view",
+    ),
 ]
 
 referral_detail_urls = [
@@ -85,7 +93,7 @@ profiles_urls = [
                     "<int:pk>/",
                     include(
                         profile_detail_urls,
-                    )
+                    ),
                 ),
                 path(
                     "referrals/",
@@ -95,12 +103,12 @@ profiles_urls = [
                                 "<int:pk>/",
                                 include(
                                     referral_detail_urls,
-                                )
+                                ),
                             ),
-                            *base_referral_urls
+                            *base_referral_urls,
                         ]
-                    )
-                )
+                    ),
+                ),
             ]
         ),
     )

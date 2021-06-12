@@ -23,6 +23,7 @@ def send_simple_verification_mail(to, token_key):
         [to],
     )
 
+
 def send_simple_verification_mail_with_verif_url(to, token_key, url):
     email_content = f"""
         Your verification url;

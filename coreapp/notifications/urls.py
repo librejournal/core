@@ -32,23 +32,16 @@ urlpatterns = [
                     notification_views.BulkReadUnreadActionView.as_view(),
                     name="bulk-mark-as-view",
                 ),
-                path(
-                    "stories/",
-                    include(
-                        [
-                            *story_notification_urls
-                        ]
-                    )
-                ),
+                path("stories/", include([*story_notification_urls])),
                 path(
                     "comments/",
                     include(
                         [
                             *comment_notification_urls,
                         ]
-                    )
-                )
+                    ),
+                ),
             ]
-        )
+        ),
     )
 ]

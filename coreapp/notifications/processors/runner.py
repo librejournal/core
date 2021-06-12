@@ -6,6 +6,7 @@ from coreapp.notifications.processors.notifications import (
     NewStoryByTagProcessor,
 )
 
+
 def run_new_story_processors(story_id):
     processors = [
         NewStoryByAuthorProcessor(relation_pk=story_id),

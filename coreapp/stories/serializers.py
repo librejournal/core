@@ -42,9 +42,9 @@ class StoryLocationSerializer(serializers.ModelSerializer):
         model = models.StoryLocations
         fields = "__all__"
         extra_kwargs = {
-            'city': {'required': False},
-            'province_1': {'required': False},
-            'province_2': {'required': False},
+            "city": {"required": False},
+            "province_1": {"required": False},
+            "province_2": {"required": False},
         }
 
     def to_internal_value(self, data):

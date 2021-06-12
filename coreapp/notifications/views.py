@@ -54,6 +54,7 @@ class BulkReadUnreadActionView(GenericAPIView):
 
     def _read(self, id_list):
         from coreapp.notifications.models import Notification
+
         to_update = []
         qs = Notification.objects.filter(id__in=id_list)
         for notification in qs.iterator():
@@ -63,6 +64,7 @@ class BulkReadUnreadActionView(GenericAPIView):
 
     def _unread(self, id_list):
         from coreapp.notifications.models import Notification
+
         to_update = []
         qs = Notification.objects.filter(id__in=id_list)
         for notification in qs.iterator():

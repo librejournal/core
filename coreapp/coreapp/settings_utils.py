@@ -14,6 +14,7 @@ SERVICE_CONSTANTS = {
 THIS_SERVICE_URL = SERVICE_CONSTANTS["core"]["url"]
 THIS_SERVICE_ACCESS_TOKEN = SERVICE_CONSTANTS["core"]["access_token"]
 
+
 def env_to_bool(key):
     value = os.environ.get(key, "").upper()
     if value == "TRUE":

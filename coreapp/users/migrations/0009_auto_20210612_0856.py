@@ -9,25 +9,61 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0008_auto_20210604_0957'),
+        ("users", "0008_auto_20210604_0957"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProfileReferrals',
+            name="ProfileReferrals",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('accepted', models.BooleanField(default=False)),
-                ('referred_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='referrers', to='users.profile')),
-                ('to_profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='referees', to='users.profile')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                ("accepted", models.BooleanField(default=False)),
+                (
+                    "referred_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="referrers",
+                        to="users.profile",
+                    ),
+                ),
+                (
+                    "to_profile",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="referees",
+                        to="users.profile",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.DeleteModel(
-            name='UserReferrals',
+            name="UserReferrals",
         ),
     ]

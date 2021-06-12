@@ -1,6 +1,11 @@
 from coreapp.stories.models import Story, Comment
 from coreapp.users.models import Profile
-from coreapp.notifications.models import Notification, StoryNotification, CommentNotification
+from coreapp.notifications.models import (
+    Notification,
+    StoryNotification,
+    CommentNotification,
+)
+
 
 def profile_queryset_following_tags(story_id):
     story = Story.objects.get(id=story_id)
@@ -9,12 +14,14 @@ def profile_queryset_following_tags(story_id):
         followed_tags__in=story_tags,
     )
 
+
 def profile_queryset_following_locations(story_id):
     story = Story.objects.get(id=story_id)
     story_locations = story.locations.all()
     return Profile.objects.filter(
         followed_locations__in=story_locations,
     )
+
 
 def profile_queryset_following_author(story_id):
     story = Story.objects.get(id=story_id)
@@ -83,6 +90,7 @@ class NewStoryByLocationProcessor(GenericNotificationProcessor):
 
     def get_affected_queryset(self):
         return profile_queryset_following_locations(self.relation_pk)
+
 
 class StoryLikeProcessor(GenericNotificationProcessor):
     notification_model = StoryNotification

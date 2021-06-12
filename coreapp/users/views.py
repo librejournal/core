@@ -55,6 +55,7 @@ class VerificationView(GenericAPIView):
         token = serializer.save()
         return Response({"token": token.key}, status=status.HTTP_201_CREATED)
 
+
 class LoginView(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = serializers.LoginSerializer
@@ -69,6 +70,7 @@ class LoginView(GenericAPIView):
         data = serializers.AuthUserSerializer(user).data
         return Response(data={"token": data["token"]}, status=status.HTTP_200_OK)
 
+
 class RegisterView(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = serializers.UserRegisterSerializer
@@ -79,6 +81,7 @@ class RegisterView(GenericAPIView):
         user = serializer.save()
         data = serializers.UserSerializer(user).data
         return Response(data=data, status=status.HTTP_201_CREATED)
+
 
 class LogoutView(GenericAPIView):
     permission_classes = [IsAuthenticated]

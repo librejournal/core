@@ -18,7 +18,12 @@ from coreapp.stories.view_mixins import (
     LikeDislikeView,
     RequestUserProfileMixin,
 )
-from coreapp.stories.filters import StoryFilter, CommentFilter, TagFilter, LocationFilter
+from coreapp.stories.filters import (
+    StoryFilter,
+    CommentFilter,
+    TagFilter,
+    LocationFilter,
+)
 from coreapp.utils.pagination import CustomLimitOffsetPagination
 
 
@@ -162,11 +167,14 @@ class StoryViewSet(ModelViewSet):
                 story_models.StoryLikes.objects.filter(
                     is_like=True,
                     story=OuterRef("pk"),
-                ).values(
+                )
+                .values(
                     "story",
-                ).annotate(
+                )
+                .annotate(
                     count=Count("pk"),
-                ).values(
+                )
+                .values(
                     "count",
                 )
             ),
@@ -178,11 +186,14 @@ class StoryViewSet(ModelViewSet):
                 story_models.StoryLikes.objects.filter(
                     is_like=False,
                     story=OuterRef("pk"),
-                ).values(
+                )
+                .values(
                     "story",
-                ).annotate(
+                )
+                .annotate(
                     count=Count("pk"),
-                ).values(
+                )
+                .values(
                     "count",
                 )
             ),
@@ -234,6 +245,7 @@ class DraftStoryViewSet(StoryViewSet, RequestUserProfileMixin):
             author=request_user_profile,
             is_draft=True,
         )
+
 
 class MyStoriesViewSet(StoryViewSet, RequestUserProfileMixin):
     def get_permission_classes(self):

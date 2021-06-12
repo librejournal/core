@@ -152,6 +152,7 @@ class FollowUnfollowSerializer(serializers.Serializer):
 class ReferralSerializer(serializers.Serializer):
     username = serializers.CharField()
 
+
 class ProfileReferralSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileReferrals
@@ -159,6 +160,7 @@ class ProfileReferralSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "accepted": {"required": False},
         }
+
 
 class RenderProfileSerializer(ProfileReferralSerializer):
     referred_by = TinyProfileSerializer()

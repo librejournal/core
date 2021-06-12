@@ -1,5 +1,7 @@
 from coreapp.coreapp.celery import app
-from coreapp.users.verification.email import send_simple_verification_mail_with_verif_url
+from coreapp.users.verification.email import (
+    send_simple_verification_mail_with_verif_url,
+)
 
 
 @app.task()

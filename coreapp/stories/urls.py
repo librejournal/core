@@ -109,8 +109,12 @@ draft_story_urls = [
 
 stories_root_urls_list = [
     # api/stories/
-    path("tags", story_tag_list_create, name="story-tag-list-create"), # added to api spec doc
-    path("locations", story_location_list_create, name="story-tag-list-create"), # added to api spec doc
+    path(
+        "tags", story_tag_list_create, name="story-tag-list-create"
+    ),  # added to api spec doc
+    path(
+        "locations", story_location_list_create, name="story-tag-list-create"
+    ),  # added to api spec doc
     path("self", my_stories_list, name="my-stories-list"),  # added to api spec doc
     path("", story_list_create, name="story-list-create"),  # added to api spec doc
     *draft_story_urls,
