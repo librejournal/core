@@ -114,4 +114,4 @@ profiles_urls = [
     )
 ]
 
-urlpatterns = router.urls + logged_in_urls + profile_urlpatterns + profiles_urls
+urlpatterns = router.urls + logged_in_urls + profile_urlpatterns + profiles_urls + auth_urls
