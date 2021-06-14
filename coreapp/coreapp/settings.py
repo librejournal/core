@@ -202,8 +202,10 @@ ENABLE_SMS = _enable_sms is not None and _enable_sms
 
 from corsheaders.defaults import default_headers
 
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    FRONTEND_URL,
     "http://files:5000",
 ]
 CORS_ALLOW_HEADERS = list(default_headers) + [

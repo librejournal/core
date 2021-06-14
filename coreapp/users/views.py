@@ -7,9 +7,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from coreapp.users import serializers
-from coreapp.users.models import GenericToken
+from coreapp.users.models import GenericToken, TOKEN_TYPE_CHOICES
 from coreapp.users.utils import get_and_authenticate_user
 from coreapp.users.permissions import IsUserVerified
+from coreapp.users.verification.email import build_password_reset_url, send_simple_password_reset_with_url
 
 
 class LoggedInUserViewSet(viewsets.ModelViewSet):
@@ -89,4 +90,38 @@ class LogoutView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         Token.objects.filter(user=request.user).delete()
         logout(request)
+        return Response(status=status.HTTP_200_OK)
+
+class PasswordResetView(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = serializers.PasswordResetSerializer
+
+    def get(self, request, *args, **kwargs):
+        if not IsAuthenticated().has_permission(request, self):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        user = request.user
+        pwd_reset_token = user.get_or_create_token_with_type(
+            type=TOKEN_TYPE_CHOICES.PASSWORD_RESET,
+        )
+
+        url = build_password_reset_url(pwd_reset_token)
+        send_simple_password_reset_with_url(user.email, pwd_reset_token, url)
+
+        return Response(status=status.HTTP_201_CREATED)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        token_from_request = serializer.data["token"]
+        generic_token = GenericToken.objects.filter(key=token_from_request).first()
+        if not generic_token:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        user = generic_token.user
+        new_password = serializer.data["password"]
+        user.set_password(new_password)
+        user.save()
+
         return Response(status=status.HTTP_200_OK)

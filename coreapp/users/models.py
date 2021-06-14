@@ -27,6 +27,7 @@ TOKEN_TYPE_CHOICES = Choices(
     "GENERIC",
     "EMAIL_VERIFICATION",
     "SMS_VERIFICATION",
+    "PASSWORD_RESET",
 )
 PROFILE_TYPE_CHOICES = Choices(
     "WRITER",
@@ -82,16 +83,16 @@ class User(AbstractUser, TimeStampedModel):
     def is_verified(self):
         return getattr(getattr(self, "userverification", None), "is_verified", False)
 
-    def get_or_create_verification_token(self, type):
+    def get_or_create_token_with_type(self, type):
         verif_token = self.generic_tokens.filter(
             type=type,
         ).first()
         if verif_token:
             return verif_token
-        return self.generic_tokens.create(type=TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION)
+        return self.generic_tokens.create(type=type)
 
     def verify_user(self, token):
-        token = self.get_or_create_verification_token(
+        token = self.get_or_create_token_with_type(
             TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION
         )
         verification, _ = UserVerification.objects.get_or_create(user=self)
@@ -262,7 +263,7 @@ class UserVerification(TimeStampedModel):
         if not settings.ENABLE_EMAILS:
             logger.debug("Emails are not enabled.")
             return
-        token = self.user.get_or_create_verification_token(
+        token = self.user.get_or_create_token_with_type(
             TOKEN_TYPE_CHOICES.EMAIL_VERIFICATION
         )
         token_key = str(token.key)
@@ -275,7 +276,7 @@ class UserVerification(TimeStampedModel):
         if not settings.ENABLE_SMS:
             logger.debug("SMSs are not enabled.")
             return
-        token_key = self.user.get_or_create_verification_token(
+        token_key = self.user.get_or_create_token_with_type(
             TOKEN_TYPE_CHOICES.SMS_VERIFICATION
         )
 

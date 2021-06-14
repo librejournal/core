@@ -7,7 +7,7 @@ from coreapp.users.views import (
     VerificationView,
     LoginView,
     LogoutView,
-    RegisterView,
+    RegisterView, PasswordResetView,
 )
 from coreapp.users.profiles import views as profile_views
 from coreapp.users.profiles.views import ProfileView
@@ -42,6 +42,7 @@ auth_urls = [
                 path("/login", LoginView.as_view(), name="login-view"),
                 path("/logout", LogoutView.as_view(), name="logout-view"),
                 path("/register", RegisterView.as_view(), name="register-view"),
+                path("/password-reset", PasswordResetView.as_view(), name="password-reset"),
             ]
         ),
     )

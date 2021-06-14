@@ -179,4 +179,9 @@ class VerificationSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = validated_data["user"]
-        return user.get_or_create_verification_token(validated_data["type"])
+        return user.get_or_create_token_with_type(validated_data["type"])
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    password = serializers.CharField()
