@@ -79,6 +79,7 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "is_active",
             "is_staff",
+            "has_pending_referral",
         ]
 
 
