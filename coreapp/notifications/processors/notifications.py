@@ -59,9 +59,6 @@ class GenericNotificationProcessor:
     def process(self):
         relation_name, relation_obj = self.relation_name, self.relation_obj
         for obj in self.get_affected_queryset():
-            import pdb
-
-            pdb.set_trace()
             get_or_create_kwargs = {
                 "type": self.notification_type,
                 "profile": obj,
