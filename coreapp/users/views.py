@@ -1,7 +1,7 @@
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout, login, get_user_model
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -12,6 +12,7 @@ from coreapp.users.utils import get_and_authenticate_user
 from coreapp.users.permissions import IsUserVerified
 from coreapp.users.verification.email import build_password_reset_url, send_simple_password_reset_with_url
 
+User = get_user_model()
 
 class LoggedInUserViewSet(viewsets.ModelViewSet):
     permission_classes = [
@@ -97,10 +98,9 @@ class PasswordResetView(GenericAPIView):
     serializer_class = serializers.PasswordResetSerializer
 
     def get(self, request, *args, **kwargs):
-        if not IsAuthenticated().has_permission(request, self):
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        email = request.query_params.get("email", None)
+        user = get_object_or_404(User, email=email)
 
-        user = request.user
         pwd_reset_token = user.get_or_create_token_with_type(
             type=TOKEN_TYPE_CHOICES.PASSWORD_RESET,
         )
