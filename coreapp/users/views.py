@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from coreapp.users import serializers
 from coreapp.users.models import GenericToken, TOKEN_TYPE_CHOICES
+from coreapp.users.tasks import send_simple_password_reset_mail_task
 from coreapp.users.utils import get_and_authenticate_user
 from coreapp.users.permissions import IsUserVerified
 from coreapp.users.verification.email import (
@@ -111,7 +112,11 @@ class PasswordResetView(GenericAPIView):
         )
 
         url = build_password_reset_url(pwd_reset_token)
-        send_simple_password_reset_with_url(user.email, pwd_reset_token, url)
+        send_simple_password_reset_mail_task.delay(
+            user.email,
+            pwd_reset_token.key,
+            url,
+        )
 
         return Response(status=status.HTTP_201_CREATED)
 
