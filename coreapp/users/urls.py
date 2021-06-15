@@ -36,13 +36,13 @@ profile_referals_detail = profile_views.ProfileReferralsViewSet.as_view(
 
 auth_urls = [
     path(
-        "api/auth",
+        "api/auth/",
         include(
             [
-                path("/login", LoginView.as_view(), name="login-view"),
-                path("/logout", LogoutView.as_view(), name="logout-view"),
-                path("/register", RegisterView.as_view(), name="register-view"),
-                path("/password-reset", PasswordResetView.as_view(), name="password-reset"),
+                path("login", LoginView.as_view(), name="login-view"),
+                path("logout", LogoutView.as_view(), name="logout-view"),
+                path("register", RegisterView.as_view(), name="register-view"),
+                path("password-reset", PasswordResetView.as_view(), name="password-reset"),
             ]
         ),
     )
