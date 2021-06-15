@@ -61,7 +61,7 @@ base_profiles_urls = [
         "self-detail", profile_views.SelfProfileView.as_view(), name="self-profile-view" # added to api spec
     ),
     path("followers", profile_views.ProfileFollowersListView.as_view(), name="self-followers-view"),
-    path("following", profile_views.ProfileFollowersListView.as_view(), name="self-following-view"),
+    path("following", profile_views.ProfileFollowingListView.as_view(), name="self-following-view"),
 ]
 
 profile_detail_urls = [

@@ -18,7 +18,7 @@ from coreapp.utils.pagination import CustomLimitOffsetPagination
 class BaseNotificationViewSet(ModelViewSet, RequestUserProfileMixin):
     authentication_classes = [IsAuthenticated]
     pagination_class = CustomLimitOffsetPagination
-    lookup_field = "id"
+    lookup_field = "notification__id"
     lookup_url_kwarg = "id"
 
     @property
@@ -53,24 +53,24 @@ class BulkReadUnreadActionView(GenericAPIView):
     serializer_class = BulkReadUnreadActionSerializer
 
     def _read(self, id_list):
-        from coreapp.notifications.models import Notification
+        from coreapp.notifications.models import BaseNotification
 
         to_update = []
-        qs = Notification.objects.filter(id__in=id_list)
+        qs = BaseNotification.objects.filter(id__in=id_list)
         for notification in qs.iterator():
             qs.is_read = True
             to_update.append(notification)
-        Notification.objects.bulk_update(to_update, ["is_read"])
+        BaseNotification.objects.bulk_update(to_update, ["is_read"])
 
     def _unread(self, id_list):
-        from coreapp.notifications.models import Notification
+        from coreapp.notifications.models import BaseNotification
 
         to_update = []
-        qs = Notification.objects.filter(id__in=id_list)
+        qs = BaseNotification.objects.filter(id__in=id_list)
         for notification in qs.iterator():
             qs.is_read = False
             to_update.append(notification)
-        Notification.objects.bulk_update(to_update, ["is_read"])
+        BaseNotification.objects.bulk_update(to_update, ["is_read"])
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

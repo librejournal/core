@@ -26,7 +26,7 @@ class BaseNotificationMessage:
 class StoryNotificationMessage(BaseNotificationMessage):
     @property
     def related_obj(self):
-        self.notification.story
+        return self.notification.story
 
     @property
     def summary_text(self):
