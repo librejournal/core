@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0009_auto_20210612_0856'),
+        ("users", "0009_auto_20210612_0856"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='generictoken',
-            name='type',
-            field=models.CharField(choices=[('GENERIC', 'GENERIC'), ('EMAIL_VERIFICATION', 'EMAIL_VERIFICATION'), ('SMS_VERIFICATION', 'SMS_VERIFICATION'), ('PASSWORD_RESET', 'PASSWORD_RESET')], default='GENERIC', max_length=100),
+            model_name="generictoken",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("GENERIC", "GENERIC"),
+                    ("EMAIL_VERIFICATION", "EMAIL_VERIFICATION"),
+                    ("SMS_VERIFICATION", "SMS_VERIFICATION"),
+                    ("PASSWORD_RESET", "PASSWORD_RESET"),
+                ],
+                default="GENERIC",
+                max_length=100,
+            ),
         ),
     ]

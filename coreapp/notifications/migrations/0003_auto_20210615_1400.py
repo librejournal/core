@@ -6,30 +6,30 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notifications', '0002_notification_is_read'),
+        ("notifications", "0002_notification_is_read"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='storynotification',
-            name='notification_ptr',
+            model_name="storynotification",
+            name="notification_ptr",
         ),
         migrations.RemoveField(
-            model_name='storynotification',
-            name='story',
+            model_name="storynotification",
+            name="story",
         ),
         migrations.RemoveField(
-            model_name='notification',
-            name='created',
+            model_name="notification",
+            name="created",
         ),
         migrations.RemoveField(
-            model_name='notification',
-            name='modified',
+            model_name="notification",
+            name="modified",
         ),
         migrations.DeleteModel(
-            name='CommentNotification',
+            name="CommentNotification",
         ),
         migrations.DeleteModel(
-            name='StoryNotification',
+            name="StoryNotification",
         ),
     ]

@@ -60,6 +60,7 @@ class GenericNotificationProcessor:
         relation_name, relation_obj = self.relation_name, self.relation_obj
         for obj in self.get_affected_queryset():
             import pdb
+
             pdb.set_trace()
             get_or_create_kwargs = {
                 "type": self.notification_type,
@@ -67,7 +68,7 @@ class GenericNotificationProcessor:
                 self.reverse_relation_name: relation_obj,
                 "defaults": {
                     "followed_id_list": self.get_followed_obj_id_list(),
-                }
+                },
             }
             base_notification, _ = BaseNotification.objects.get_or_create(
                 **get_or_create_kwargs,
@@ -104,7 +105,7 @@ class NewStoryByTagProcessor(GenericNotificationProcessor):
         return profile_queryset_following_tags(self.relation_pk)
 
     def get_followed_obj_id_list(self):
-        return list(self.relation_obj.tags.values_list('id', flat=True))
+        return list(self.relation_obj.tags.values_list("id", flat=True))
 
 
 class NewStoryByLocationProcessor(GenericNotificationProcessor):
@@ -117,9 +118,8 @@ class NewStoryByLocationProcessor(GenericNotificationProcessor):
     def get_affected_queryset(self):
         return profile_queryset_following_locations(self.relation_pk)
 
-
     def get_followed_obj_id_list(self):
-        return list(self.relation_obj.locations.values_list('id', flat=True))
+        return list(self.relation_obj.locations.values_list("id", flat=True))
 
 
 class StoryLikeProcessor(GenericNotificationProcessor):

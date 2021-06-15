@@ -62,7 +62,6 @@ class BaseNotification(TimeStampedModel):
         return self.followed_obj_model.objects.filter(id__in=self.followed_id_list)
 
 
-
 class StoryNotification(models.Model, ModelMessageMixin):
     _message_class = StoryNotificationMessage
 

@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0010_alter_generictoken_type'),
+        ("users", "0010_alter_generictoken_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='profile',
-            name='followed_authors',
-            field=models.ManyToManyField(related_name='followed_by', to='users.Profile'),
+            model_name="profile",
+            name="followed_authors",
+            field=models.ManyToManyField(
+                related_name="followed_by", to="users.Profile"
+            ),
         ),
     ]

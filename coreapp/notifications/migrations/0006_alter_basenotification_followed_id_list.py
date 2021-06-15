@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notifications', '0005_basenotification_followed_id_list'),
+        ("notifications", "0005_basenotification_followed_id_list"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='basenotification',
-            name='followed_id_list',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.BigIntegerField(), blank=True, null=True, size=None),
+            model_name="basenotification",
+            name="followed_id_list",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.BigIntegerField(), blank=True, null=True, size=None
+            ),
         ),
     ]

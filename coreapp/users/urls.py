@@ -5,7 +5,8 @@ from coreapp.users.views import (
     VerificationView,
     LoginView,
     LogoutView,
-    RegisterView, PasswordResetView,
+    RegisterView,
+    PasswordResetView,
 )
 from coreapp.users.profiles import views as profile_views
 from coreapp.users.profiles.urls import urlpatterns as profile_urlpatterns
@@ -39,7 +40,9 @@ auth_urls = [
                 path("login", LoginView.as_view(), name="login-view"),
                 path("logout", LogoutView.as_view(), name="logout-view"),
                 path("register", RegisterView.as_view(), name="register-view"),
-                path("password-reset", PasswordResetView.as_view(), name="password-reset"),
+                path(
+                    "password-reset", PasswordResetView.as_view(), name="password-reset"
+                ),
             ]
         ),
     )
@@ -55,13 +58,27 @@ logged_in_urls = [
 ]
 
 base_profiles_urls = [
-    path("follow", profile_views.FollowView.as_view(), name="follow-action-view"), # added to api spec
-    path("unfollow", profile_views.UnfollowView.as_view(), name="follow-action-view"), # added to api spec
     path(
-        "self-detail", profile_views.SelfProfileView.as_view(), name="self-profile-view" # added to api spec
+        "follow", profile_views.FollowView.as_view(), name="follow-action-view"
+    ),  # added to api spec
+    path(
+        "unfollow", profile_views.UnfollowView.as_view(), name="follow-action-view"
+    ),  # added to api spec
+    path(
+        "self-detail",
+        profile_views.SelfProfileView.as_view(),
+        name="self-profile-view",  # added to api spec
     ),
-    path("followers", profile_views.ProfileFollowersListView.as_view(), name="self-followers-view"),
-    path("following", profile_views.ProfileFollowingListView.as_view(), name="self-following-view"),
+    path(
+        "followers",
+        profile_views.ProfileFollowersListView.as_view(),
+        name="self-followers-view",
+    ),
+    path(
+        "following",
+        profile_views.ProfileFollowingListView.as_view(),
+        name="self-following-view",
+    ),
 ]
 
 profile_detail_urls = [

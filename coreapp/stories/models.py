@@ -86,7 +86,9 @@ class Story(TimeStampedModel):
             like.save()
 
     def save(self, *args, **kwargs):
-        from coreapp.notifications.tasks import run_new_story_notifications_processor_task
+        from coreapp.notifications.tasks import (
+            run_new_story_notifications_processor_task,
+        )
 
         trigger_notifications = False
         if not self.is_draft:

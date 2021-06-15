@@ -10,9 +10,13 @@ from coreapp.users import serializers
 from coreapp.users.models import GenericToken, TOKEN_TYPE_CHOICES
 from coreapp.users.utils import get_and_authenticate_user
 from coreapp.users.permissions import IsUserVerified
-from coreapp.users.verification.email import build_password_reset_url, send_simple_password_reset_with_url
+from coreapp.users.verification.email import (
+    build_password_reset_url,
+    send_simple_password_reset_with_url,
+)
 
 User = get_user_model()
+
 
 class LoggedInUserViewSet(viewsets.ModelViewSet):
     permission_classes = [
@@ -92,6 +96,7 @@ class LogoutView(GenericAPIView):
         Token.objects.filter(user=request.user).delete()
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
 
 class PasswordResetView(GenericAPIView):
     permission_classes = [AllowAny]

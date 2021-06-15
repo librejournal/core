@@ -10,44 +10,115 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0015_alter_storylocations_city'),
-        ('users', '0011_alter_profile_followed_authors'),
-        ('notifications', '0003_auto_20210615_1400'),
+        ("stories", "0015_alter_storylocations_city"),
+        ("users", "0011_alter_profile_followed_authors"),
+        ("notifications", "0003_auto_20210615_1400"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BaseNotification',
+            name="BaseNotification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('type', models.CharField(db_index=True, max_length=50)),
-                ('is_read', models.BooleanField(db_index=True, default=False)),
-                ('profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notifications', to='users.profile')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                ("type", models.CharField(db_index=True, max_length=50)),
+                ("is_read", models.BooleanField(db_index=True, default=False)),
+                (
+                    "profile",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notifications",
+                        to="users.profile",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='CommentNotification',
+            name="CommentNotification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notifications', to='stories.comment')),
-                ('notification', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='notifications.basenotification')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "comment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notifications",
+                        to="stories.comment",
+                    ),
+                ),
+                (
+                    "notification",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="notifications.basenotification",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='StoryNotification',
+            name="StoryNotification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('notification', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='notifications.basenotification')),
-                ('story', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notifications', to='stories.story')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "notification",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="notifications.basenotification",
+                    ),
+                ),
+                (
+                    "story",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notifications",
+                        to="stories.story",
+                    ),
+                ),
             ],
             bases=(models.Model, coreapp.notifications.models.ModelMessageMixin),
         ),
         migrations.DeleteModel(
-            name='Notification',
+            name="Notification",
         ),
     ]
