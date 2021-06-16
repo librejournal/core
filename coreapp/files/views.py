@@ -10,7 +10,7 @@ from coreapp.files.models import Picture
 
 class UploadPictureView(GenericAPIView):
     serializer_class = PictureSerializer
-    permission_classes = IsAuthenticated
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         received_file = request.FILES["file"]
