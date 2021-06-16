@@ -111,7 +111,7 @@ class PasswordResetView(GenericAPIView):
             type=TOKEN_TYPE_CHOICES.PASSWORD_RESET,
         )
 
-        url = build_password_reset_url(pwd_reset_token)
+        url = build_password_reset_url(pwd_reset_token.key)
         send_simple_password_reset_mail_task.delay(
             user.email,
             pwd_reset_token.key,
