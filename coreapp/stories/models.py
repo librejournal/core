@@ -85,6 +85,23 @@ class Story(TimeStampedModel):
             like.is_like = False
             like.save()
 
+    def save(self, *args, **kwargs):
+        from coreapp.notifications.tasks import (
+            run_new_story_notifications_processor_task,
+        )
+
+        trigger_notifications = False
+        if not self.is_draft:
+            old_is_draft = Story.objects.get(id=self.id).is_draft
+            if old_is_draft != self.is_draft:
+                # story is published for first time and should trigger notifs after save
+                trigger_notifications = True
+
+        super().save(*args, **kwargs)
+
+        if trigger_notifications:
+            run_new_story_notifications_processor_task.delay(self.id)
+
 
 class StoryComponent(TimeStampedModel):
     TYPE_CHOICES = Choices(

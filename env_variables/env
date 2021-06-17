@@ -5,4 +5,4 @@ DB_PASSWORD=librejournalDB2021
 DB_HOSTNAME=core_db
 DB_PORT=5432
 
-CELERY_BROKER_URL=amqp://librejournal:librejournal@rabbit//
+CELERY_BROKER_URL=amqp://librejournal:librejournal@rabbitmq:5672//

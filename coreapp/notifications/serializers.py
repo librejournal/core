@@ -1,54 +1,61 @@
 from rest_framework import serializers
 
-from coreapp.notifications.models import StoryNotification, CommentNotification
+from coreapp.notifications.models import (
+    StoryNotification,
+    CommentNotification,
+    BaseNotification,
+)
 
 
-class BaseNotificationSerializerMixin:
-    id = serializers.IntegerField(source="notification_ptr.id", read_only=True)
-    created = serializers.DateTimeField(
-        source="notification_ptr.created", read_only=True
-    )
-    modified = serializers.DateTimeField(
-        source="notification_ptr.modified", read_only=True
-    )
-    type = serializers.CharField(source="notification_ptr.type", read_only=True)
-    is_read = serializers.CharField(source="notification_ptr.is_read", read_only=True)
-    message = serializers.SerializerMethodField()
+class BaseNotificationSerializer(serializers.ModelSerializer):
+    followed_model_name = serializers.SerializerMethodField()
 
     class Meta:
+        model = BaseNotification
         fields = [
             "id",
             "created",
             "modified",
             "type",
-            "message",
             "is_read",
+            "followed_id_list",
+            "followed_model_name",
+        ]
+
+    def get_followed_model_name(self, obj):
+        return obj.followed_obj_model_name
+
+
+class StoryNofiticationSerializer(serializers.ModelSerializer):
+    notification = BaseNotificationSerializer(read_only=True)
+    message = serializers.SerializerMethodField()
+
+    class Meta:
+        model = StoryNotification
+        fields = [
+            "notification",
+            "story",
+            "message",
         ]
 
     def get_message(self, obj):
-        return obj.message_dict
+        return getattr(obj, "message_dict", {})
 
 
-class StoryNofiticationSerializer(
-    serializers.ModelSerializer,
-    BaseNotificationSerializerMixin,
-):
-    class Meta(BaseNotificationSerializerMixin.Meta):
-        model = StoryNotification
-        fields = BaseNotificationSerializerMixin.Meta.fields + [
-            "story",
-        ]
+class CommentNotificationSerializer(serializers.ModelSerializer):
+    notification = BaseNotificationSerializer(read_only=True)
+    message = serializers.SerializerMethodField()
 
-
-class CommentNotificationSerializer(
-    serializers.ModelSerializer,
-    BaseNotificationSerializerMixin,
-):
-    class Meta(BaseNotificationSerializerMixin.Meta):
-        model = StoryNotification
-        fields = BaseNotificationSerializerMixin.Meta.fields + [
+    class Meta:
+        model = CommentNotification
+        fields = [
+            "notification",
             "comment",
+            "message",
         ]
+
+    def get_message(self, obj):
+        return getattr(obj, "message_dict", {})
 
 
 class BulkReadUnreadActionSerializer(serializers.SerializerMethodField):

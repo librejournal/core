@@ -1,20 +1,18 @@
 from django.urls import path, include
 
-from rest_framework import routers
-
 from coreapp.users.views import (
     LoggedInUserViewSet,
     VerificationView,
     LoginView,
     LogoutView,
-    RegisterView, PasswordResetView,
+    RegisterView,
+    PasswordResetView,
 )
 from coreapp.users.profiles import views as profile_views
-from coreapp.users.profiles.views import ProfileView
 from coreapp.users.profiles.urls import urlpatterns as profile_urlpatterns
 
-router = routers.DefaultRouter(trailing_slash=False)
-router.register("api/profile", ProfileView, basename="userprofile")
+# router = routers.DefaultRouter(trailing_slash=False)
+# router.register("api/profile", ProfileView, basename="userprofile")
 
 logged_in_user_detail = LoggedInUserViewSet.as_view(
     {"get": "retrieve"}
@@ -42,7 +40,9 @@ auth_urls = [
                 path("login", LoginView.as_view(), name="login-view"),
                 path("logout", LogoutView.as_view(), name="logout-view"),
                 path("register", RegisterView.as_view(), name="register-view"),
-                path("password-reset", PasswordResetView.as_view(), name="password-reset"),
+                path(
+                    "password-reset", PasswordResetView.as_view(), name="password-reset"
+                ),
             ]
         ),
     )
@@ -58,10 +58,26 @@ logged_in_urls = [
 ]
 
 base_profiles_urls = [
-    path("follow", profile_views.FollowView.as_view(), name="follow-action-view"),
-    path("unfollow", profile_views.UnfollowView.as_view(), name="follow-action-view"),
     path(
-        "self-detail", profile_views.SelfProfileView.as_view(), name="self-profile-view"
+        "follow", profile_views.FollowView.as_view(), name="follow-action-view"
+    ),  # added to api spec
+    path(
+        "unfollow", profile_views.UnfollowView.as_view(), name="follow-action-view"
+    ),  # added to api spec
+    path(
+        "self-detail",
+        profile_views.SelfProfileView.as_view(),
+        name="self-profile-view",  # added to api spec
+    ),
+    path(
+        "followers",
+        profile_views.ProfileFollowersListView.as_view(),
+        name="self-followers-view",
+    ),
+    path(
+        "following",
+        profile_views.ProfileFollowingListView.as_view(),
+        name="self-following-view",
     ),
 ]
 
@@ -115,4 +131,4 @@ profiles_urls = [
     )
 ]
 
-urlpatterns = router.urls + logged_in_urls + profile_urlpatterns + profiles_urls + auth_urls
+urlpatterns = logged_in_urls + profile_urlpatterns + profiles_urls + auth_urls

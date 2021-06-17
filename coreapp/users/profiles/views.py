@@ -2,7 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.generics import get_object_or_404, GenericAPIView
+from rest_framework.generics import get_object_or_404, GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -257,3 +257,27 @@ class ProfileReferralsViewSet(ModelViewSet, RequestUserProfileMixin):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(status=status.HTTP_201_CREATED, headers=headers)
+
+
+class ProfileFollowingListView(ListAPIView, RequestUserProfileMixin):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TinyProfileSerializer
+    pagination_class = CustomLimitOffsetPagination
+
+    def get_profile(self):
+        return self.profile
+
+    def get_queryset(self):
+        return self.get_profile().followed_authors.all()
+
+
+class ProfileFollowersListView(ListAPIView, RequestUserProfileMixin):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TinyProfileSerializer
+    pagination_class = CustomLimitOffsetPagination
+
+    def get_profile(self):
+        return self.profile
+
+    def get_queryset(self):
+        return self.get_profile().followed_by.all()

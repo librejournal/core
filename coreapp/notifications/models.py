@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from model_utils.models import TimeStampedModel
@@ -19,7 +20,7 @@ class ModelMessageMixin:
         return self._message_class(self).to_dict()
 
 
-class Notification(TimeStampedModel):
+class BaseNotification(TimeStampedModel):
     NOTIFICATION_TYPES = Choices(
         "STORY_LIKE",
         "COMMENT_LIKE",
@@ -32,17 +33,50 @@ class Notification(TimeStampedModel):
         "users.Profile", related_name="notifications", on_delete=models.CASCADE
     )
     is_read = models.BooleanField(default=False, db_index=True)
+    followed_id_list = ArrayField(
+        models.BigIntegerField(),
+        null=True,
+        blank=True,
+    )
+
+    @property
+    def followed_obj_model(self):
+        from coreapp.stories.models import Story, Comment, StoryTags, StoryLocations
+        from coreapp.users.models import Profile
+
+        types = BaseNotification.NOTIFICATION_TYPES
+        return {
+            types.STORY_LIKE: Story,
+            types.COMMENT_LIKE: Comment,
+            types.NEW_STORY_PROFILE: Profile,
+            types.NEW_STORY_TAG: StoryTags,
+            types.NEW_STORY_LOCATION: StoryLocations,
+        }[self.type]
+
+    @property
+    def followed_obj_model_name(self):
+        return self.followed_obj_model.__name__.upper()
+
+    @property
+    def followed_obj_queryset(self):
+        return self.followed_obj_model.objects.filter(id__in=self.followed_id_list)
 
 
-class StoryNotification(Notification, ModelMessageMixin):
+class StoryNotification(models.Model, ModelMessageMixin):
     _message_class = StoryNotificationMessage
 
+    notification = models.OneToOneField(
+        "notifications.BaseNotification", on_delete=models.CASCADE
+    )
     story = models.ForeignKey(
         "stories.Story", related_name="notifications", on_delete=models.CASCADE
     )
 
 
-class CommentNotification(Notification):
+class CommentNotification(models.Model):
+    notification = models.OneToOneField(
+        "notifications.BaseNotification", on_delete=models.CASCADE
+    )
     comment = models.ForeignKey(
         "stories.Comment", related_name="notifications", on_delete=models.CASCADE
     )

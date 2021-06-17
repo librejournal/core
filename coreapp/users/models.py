@@ -144,7 +144,11 @@ class Profile(TimeStampedModel):
         "stories.StoryTags",
         related_name="followed_by",
     )
-    followed_authors = models.ManyToManyField("self", related_name="followed_by")
+    followed_authors = models.ManyToManyField(
+        "self",
+        related_name="followed_by",
+        symmetrical=False,
+    )
 
     @property
     def posts_count(self):

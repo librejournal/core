@@ -16,9 +16,9 @@ from coreapp.utils.pagination import CustomLimitOffsetPagination
 
 
 class BaseNotificationViewSet(ModelViewSet, RequestUserProfileMixin):
-    authentication_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = CustomLimitOffsetPagination
-    lookup_field = "id"
+    lookup_field = "notification__id"
     lookup_url_kwarg = "id"
 
     @property
@@ -26,13 +26,13 @@ class BaseNotificationViewSet(ModelViewSet, RequestUserProfileMixin):
         return self.serializer_class.Meta.model
 
     def get_query(self):
-        status = self.request.query_params.get("status", None)
-        base_query = Q(notification_ptr__profile=self.profile)
+        status = self.request.query_params.get("status", "all")
+        base_query = Q(notification__profile=self.profile)
         if status and status in {"read", "unread"}:
             if status == "read":
-                base_query = base_query & Q(notification_ptr__is_read=True)
+                base_query = base_query & Q(notification__is_read=True)
             if status == "unread":
-                base_query = base_query & Q(notification_ptr__is_read=False)
+                base_query = base_query & Q(notification__is_read=False)
         return base_query
 
     def get_queryset(self):
@@ -53,24 +53,24 @@ class BulkReadUnreadActionView(GenericAPIView):
     serializer_class = BulkReadUnreadActionSerializer
 
     def _read(self, id_list):
-        from coreapp.notifications.models import Notification
+        from coreapp.notifications.models import BaseNotification
 
         to_update = []
-        qs = Notification.objects.filter(id__in=id_list)
+        qs = BaseNotification.objects.filter(id__in=id_list)
         for notification in qs.iterator():
             qs.is_read = True
             to_update.append(notification)
-        Notification.objects.bulk_update(to_update, ["is_read"])
+        BaseNotification.objects.bulk_update(to_update, ["is_read"])
 
     def _unread(self, id_list):
-        from coreapp.notifications.models import Notification
+        from coreapp.notifications.models import BaseNotification
 
         to_update = []
-        qs = Notification.objects.filter(id__in=id_list)
+        qs = BaseNotification.objects.filter(id__in=id_list)
         for notification in qs.iterator():
             qs.is_read = False
             to_update.append(notification)
-        Notification.objects.bulk_update(to_update, ["is_read"])
+        BaseNotification.objects.bulk_update(to_update, ["is_read"])
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
