@@ -90,6 +90,7 @@ class StoryComponent(TimeStampedModel):
     TYPE_CHOICES = Choices(
         "TEXT",
         "TITLE",
+        "IMAGE_URL",
         "IMAGE",
     )
 
@@ -105,7 +106,7 @@ class StoryComponent(TimeStampedModel):
         blank=True,
     )
     text = models.TextField()
-    # type = TEXT / TITLE / IMAGE - CharField(Enum)
+    # type = TEXT / TITLE / IMAGE / IMAGE_URL - CharField(Enum)
     type = models.CharField(
         max_length=100, choices=TYPE_CHOICES, db_index=True, null=True, blank=True
     )
