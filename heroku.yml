@@ -6,5 +6,6 @@ run:
   web: bash start.sh
   worker: bash start_worker.sh
 release:
+  image: web
   command:
     - bash release_tasks.sh
