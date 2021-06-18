@@ -209,12 +209,14 @@ if ENV == "docker_local":
 
 if ENV == "heroku":
     _celery_result_backend = os.environ.get("REDISCLOUD_URL")
-    _celery_broker_url = os.environ.get("CLOUDAMQP_URL")
+    # _celery_broker_url = os.environ.get("CLOUDAMQP_URL")
+    _celery_broker_url = os.environ.get("REDISCLOUD_URL")
 
 _celery_result_backend = _celery_result_backend or "redis://redis:6379/0"
 _celery_broker_url = _celery_broker_url or "amqp://guest:guest@localhost:5672//"
 
 CELERY_BROKER_URL = _celery_broker_url
+CELERY_BROKER_POOL_LIMIT = 1
 CELERY_RESULT_BACKEND = _celery_result_backend
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
