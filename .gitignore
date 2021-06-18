@@ -131,3 +131,8 @@ dmypy.json
 .idea/
 /coreapp/erd.dot
 /coreapp/erd.png
+/coreapp/coreapp/static/*
+/coreapp/coreapp/staticfiles/*
+
+!/coreapp/coreapp/static/.gitkeep
+!/coreapp/coreapp/staticfiles/.gitkeep

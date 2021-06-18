@@ -19,3 +19,6 @@ COPY requirements/ requirements/
 RUN pip install --exists-action w -r requirements/requirements.txt
 
 COPY . ./
+
+# entrypoint script waits for postgres database, migrates, collects static files
+ENTRYPOINT ["./entrypoint.sh"]

@@ -11,6 +11,10 @@ migrate() {
     python manage.py migrate --noinput
 }
 
+collectstatic() {
+    python manage.py collectstatic --noinput
+}
+
 postgres_ready() {
     python << END
 import sys
@@ -51,4 +55,5 @@ done
 >&2 echo 'PostgreSQL is up - continuing...'
 
 migrate
+collectstatic
 ${cmd[@]}
