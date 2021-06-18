@@ -3,5 +3,5 @@ build:
     web: Dockerfile.heroku
     worker: Dockerfile.worker
 run:
-  web: ./start.sh
-  worker: ./start_worker.sh
+  web: bash start.sh
+  worker: bash start_worker.sh
