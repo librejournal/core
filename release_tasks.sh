@@ -7,4 +7,4 @@ mkdir coreapp/coreapp/static
 mkdir coreapp/coreapp/staticfiles
 
 echo "Collecting static files..."
-python manage.py collect
+python manage.py collectstatic
