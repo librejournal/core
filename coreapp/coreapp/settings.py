@@ -121,6 +121,13 @@ except KeyError:
 if ENV == "docker_local":
     DATABASES["default"] = DATABASES["_default_postgresql"]
 
+if ENV == "heroku":
+    import dj_database_url
+    DATABASES["default"] = dj_database_url.parse(
+        os.environ.get("HEROKU_DATABASE_URL"),
+        conn_max_age=600,
+    )
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -186,10 +193,20 @@ EMAIL_HOST_PASSWORD = _sendgrid_api_key
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-CELERY_BROKER_URL = os.environ.get(
-    "CELERY_BROKER_URL", "amqp://guest:guest@localhost:5672//"
-)
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
+
+if ENV == "docker_local":
+    _celery_result_backend = os.environ.get("CELERY_RESULT_BACKEND")
+    _celery_broker_url = os.environ.get("CELERY_BROKER_URL")
+
+if ENV == "heroku":
+    _celery_result_backend = os.environ.get("REDISCLOUD_URL")
+    _celery_broker_url = os.environ.get("CLOUDAMQP_URL")
+
+_celery_result_backend = _celery_result_backend or "redis://redis:6379/0"
+_celery_broker_url = _celery_broker_url or "amqp://guest:guest@localhost:5672//"
+
+CELERY_BROKER_URL = _celery_broker_url
+CELERY_RESULT_BACKEND = _celery_result_backend
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
