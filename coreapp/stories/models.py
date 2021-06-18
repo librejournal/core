@@ -295,8 +295,11 @@ class StoryLikes(TimeStampedModel):
         profile_stats.save()
 
     def save(self, *args, **kwargs):
+        from coreapp.notifications.processors.notifications import StoryLikeProcessor
+
         super().save(*args, **kwargs)
         self._update_profile_stats()
+        StoryLikeProcessor(relation_pk=self.story_id).process()
 
 
 class CommentLikes(TimeStampedModel):
@@ -314,5 +317,8 @@ class CommentLikes(TimeStampedModel):
         profile_stats.save()
 
     def save(self, *args, **kwargs):
+        from coreapp.notifications.processors.notifications import CommentLikeProcessor
+
         super().save(*args, **kwargs)
         self._update_profile_stats()
+        CommentLikeProcessor(relation_pk=self.comment_id).process()

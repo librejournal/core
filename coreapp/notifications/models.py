@@ -9,6 +9,7 @@ from model_utils.choices import Choices
 from coreapp.notifications.processors.message import (
     StoryNotificationMessage,
     BaseNotificationMessage,
+    CommentNotificationMessage,
 )
 
 
@@ -73,7 +74,9 @@ class StoryNotification(models.Model, ModelMessageMixin):
     )
 
 
-class CommentNotification(models.Model):
+class CommentNotification(models.Model, ModelMessageMixin):
+    _message_class = CommentNotificationMessage
+
     notification = models.OneToOneField(
         "notifications.BaseNotification", on_delete=models.CASCADE
     )

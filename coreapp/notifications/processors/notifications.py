@@ -56,6 +56,12 @@ class GenericNotificationProcessor:
     def relation_obj(self):
         return self.relation_model.objects.filter(pk=self.relation_pk).first()
 
+    def post_base_notification_action(self, base_notification):
+        return
+
+    def post_notification_action(self, notification):
+        return
+
     def process(self):
         relation_name, relation_obj = self.relation_name, self.relation_obj
         for obj in self.get_affected_queryset():
@@ -65,16 +71,19 @@ class GenericNotificationProcessor:
                 self.reverse_relation_name: relation_obj,
                 "defaults": {
                     "followed_id_list": self.get_followed_obj_id_list(),
+                    "is_read": False,
                 },
             }
-            base_notification, _ = BaseNotification.objects.get_or_create(
+            base_notification, _ = BaseNotification.objects.update_or_create(
                 **get_or_create_kwargs,
             )
+            self.post_base_notification_action(base_notification)
             creation_kwargs = {
                 relation_name: relation_obj,
                 "notification": base_notification,
             }
-            self.notification_model.objects.get_or_create(**creation_kwargs)
+            notification, _ = self.notification_model.objects.get_or_create(**creation_kwargs)
+            self.post_notification_action(notification)
 
 
 class NewStoryByAuthorProcessor(GenericNotificationProcessor):
@@ -143,7 +152,7 @@ class CommentLikeProcessor(GenericNotificationProcessor):
 
     def get_affected_queryset(self):
         comment = Comment.objects.get(id=self.relation_pk)
-        return [comment.author]
+        return [commentof.author]
 
     def get_followed_obj_id_list(self):
         return [self.relation_obj.id]
