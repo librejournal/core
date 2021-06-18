@@ -9,10 +9,6 @@ from coreapp.users.views import (
     PasswordResetView,
 )
 from coreapp.users.profiles import views as profile_views
-from coreapp.users.profiles.urls import urlpatterns as profile_urlpatterns
-
-# router = routers.DefaultRouter(trailing_slash=False)
-# router.register("api/profile", ProfileView, basename="userprofile")
 
 logged_in_user_detail = LoggedInUserViewSet.as_view(
     {"get": "retrieve"}
@@ -58,6 +54,7 @@ logged_in_urls = [
 ]
 
 base_profiles_urls = [
+    path("search", profile_views.TinyProfileViewSet.as_view({"get":"list"}), name="list-profiles"),
     path(
         "follow", profile_views.FollowView.as_view(), name="follow-action-view"
     ),  # added to api spec
@@ -131,4 +128,4 @@ profiles_urls = [
     )
 ]
 
-urlpatterns = logged_in_urls + profile_urlpatterns + profiles_urls + auth_urls
+urlpatterns = logged_in_urls + profiles_urls + auth_urls
