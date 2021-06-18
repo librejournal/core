@@ -64,6 +64,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -235,3 +236,5 @@ SERVICES = SERVICE_CONSTANTS
 THIS_SERVICE_ACCESS_TOKEN = SERVICES["core"]["access_token"]
 
 MAX_REFERRALS_COUNT = 2
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
