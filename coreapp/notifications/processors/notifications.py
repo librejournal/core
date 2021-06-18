@@ -82,7 +82,9 @@ class GenericNotificationProcessor:
                 relation_name: relation_obj,
                 "notification": base_notification,
             }
-            notification, _ = self.notification_model.objects.get_or_create(**creation_kwargs)
+            notification, _ = self.notification_model.objects.get_or_create(
+                **creation_kwargs
+            )
             self.post_notification_action(notification)
 
 

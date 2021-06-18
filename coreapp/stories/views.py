@@ -8,7 +8,7 @@ from django_filters import rest_framework as filters
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from coreapp.stories import serializers as story_serializers
@@ -364,3 +364,21 @@ class CommentLikeView(LikeDislikeView):
 class CommentDislikeView(LikeDislikeView):
     action_type = "dislike"
     object_type = "comment"
+
+
+class FollowedLocationsView(ListAPIView, RequestUserProfileMixin):
+    permission_classes = [IsAuthenticated]
+    serializer_class = story_serializers.StoryLocationSerializer
+    pagination_class = CustomLimitOffsetPagination
+
+    def get_queryset(self):
+        return self.profile.followed_locations.all()
+
+
+class FollowedTagsView(ListAPIView, RequestUserProfileMixin):
+    permission_classes = [IsAuthenticated]
+    serializer_class = story_serializers.StoryTagsSerializer
+    pagination_class = CustomLimitOffsetPagination
+
+    def get_queryset(self):
+        return self.profile.followed_tags.all()

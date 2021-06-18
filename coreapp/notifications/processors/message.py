@@ -38,6 +38,7 @@ class StoryNotificationMessage(BaseNotificationMessage):
     def summary_title(self):
         return "A story has been published."
 
+
 class CommentNotificationMessage(BaseNotificationMessage):
     @property
     def related_obj(self):
