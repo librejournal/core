@@ -27,6 +27,13 @@ ENV = os.environ.get("ENV", "local")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+STATIC_ROOT = PROJECT_ROOT / "static"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    PROJECT_ROOT / "staticfiles",
+)
 
 
 # Quick-start development settings - unsuitable for production
@@ -194,7 +201,8 @@ EMAIL_HOST_PASSWORD = _sendgrid_api_key
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-
+_celery_result_backend = None
+_celery_broker_url = None
 if ENV == "docker_local":
     _celery_result_backend = os.environ.get("CELERY_RESULT_BACKEND")
     _celery_broker_url = os.environ.get("CELERY_BROKER_URL")
