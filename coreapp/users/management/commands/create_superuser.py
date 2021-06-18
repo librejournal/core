@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand
 
@@ -10,10 +12,8 @@ class Command(BaseCommand):
     help = "Create initial superuser."
 
     def handle(self, *args, **options):
-        if not is_local_env():
-            return
         user, _ = User.objects.get_or_create(username="superuser")
-        user.set_password("123123")
+        user.set_password(os.environ.get("SU_PWD"))
         user.is_staff = True
         user.is_superuser = True
         user.save()

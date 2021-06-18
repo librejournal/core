@@ -1,7 +1,7 @@
 build:
   docker:
     web: Dockerfile.heroku
-    worker: Dockerfile.worker
+    worker: Dockerfile.heroku.worker
 run:
   web: bash start.sh
   worker: bash start_worker.sh

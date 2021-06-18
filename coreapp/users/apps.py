@@ -43,7 +43,7 @@ class UsersConfig(AppConfig):
             else:
                 token = Token.objects.filter(user_id=user.id).update(key=access_token)
 
-    def _create_superuser(self):
+    def _create_superuser_local(self):
         from .models import User
 
         if not is_local_env():
@@ -53,6 +53,16 @@ class UsersConfig(AppConfig):
         user.is_staff = True
         user.is_superuser = True
         user.save()
+
+    def _create_superuser_non_local(self):
+        from coreapp.users.management.commands.create_superuser import Command as SuperUserCommand
+        SuperUserCommand().handle()
+
+    def _create_superuser(self):
+        if not is_local_env():
+            self._create_superuser_non_local()
+        else:
+            self._create_superuser_local()
 
     def ready(self):
         try:

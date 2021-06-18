@@ -7,4 +7,4 @@ set -o xtrace
 
 python manage.py migrate
 
-celery -A coreapp.coreapp worker -l info
+celery -A coreapp.coreapp worker -l info -c 4
