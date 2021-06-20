@@ -1,4 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import F
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
@@ -131,6 +132,13 @@ class TinyProfileViewSet(viewsets.ModelViewSet):
 
     filterset_class = ProfileFilter
     filter_backends = (filters.DjangoFilterBackend,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.annotate(
+            profile_score=F("profilestatistics__reputation"),
+        )
+        return qs
 
 
 class GenericFollowUnFollowView(GenericAPIView):
