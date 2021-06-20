@@ -39,6 +39,11 @@ class CommentFilter(filters.FilterSet):
 
 class TagFilter(filters.FilterSet):
     search = CharFilter(field_name="tag", lookup_expr="contains")
+    ordering = OrderingFilter(
+        fields=(
+            ("story_count", "usage"),
+        )
+    )
 
     class Meta:
         model = StoryTags
@@ -47,6 +52,11 @@ class TagFilter(filters.FilterSet):
 
 class LocationFilter(filters.FilterSet):
     search = CharFilter(field_name="location_search", lookup_expr="contains")
+    ordering = OrderingFilter(
+        fields=(
+            ("story_count", "usage"),
+        )
+    )
 
     class Meta:
         model = StoryLocations

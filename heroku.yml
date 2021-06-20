@@ -5,3 +5,7 @@ build:
 run:
   web: bash start.sh
   worker: bash start_worker.sh
+release:
+  image: web
+  command:
+    - python manage.py migrate

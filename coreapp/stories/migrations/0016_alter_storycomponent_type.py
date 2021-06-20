@@ -6,13 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stories', '0015_alter_storylocations_city'),
+        ("stories", "0015_alter_storylocations_city"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='storycomponent',
-            name='type',
-            field=models.CharField(blank=True, choices=[('TEXT', 'TEXT'), ('TITLE', 'TITLE'), ('IMAGE_URL', 'IMAGE_URL'), ('IMAGE', 'IMAGE')], db_index=True, max_length=100, null=True),
+            model_name="storycomponent",
+            name="type",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("TEXT", "TEXT"),
+                    ("TITLE", "TITLE"),
+                    ("IMAGE_URL", "IMAGE_URL"),
+                    ("IMAGE", "IMAGE"),
+                ],
+                db_index=True,
+                max_length=100,
+                null=True,
+            ),
         ),
     ]

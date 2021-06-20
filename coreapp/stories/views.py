@@ -93,19 +93,43 @@ class StoryLocationViewSet(ModelViewSet):
     filterset_class = LocationFilter
     filter_backends = (filters.DjangoFilterBackend,)
 
-    def get_queryset(self):
-        qs = story_models.StoryLocations.objects.all()
+    def annotate_story_count(self, qs):
         return qs.annotate(
-            location_search=Concat(
-                F("country"),
-                Value("^"),
-                F("city"),
-                Value("^"),
-                F("province_1"),
-                Value("^"),
-                F("province_2"),
-            ),
+            story_count=Subquery(
+                story_models.StoryLocations.objects.filter(
+                    id=OuterRef("pk"),
+                    story__is_draft=False,
+                ).values(
+                    "id",
+                ).annotate(
+                    count=Count("pk"),
+                ).values("count")
+            )
         )
+
+    def get_queryset(self):
+        ordering_param_value = list(
+            reversed(self.request.query_params.get("ordering", "").split("-"))
+        )[0]
+        search_param_value = self.request.query_params.get("search", None)
+
+        qs = story_models.StoryLocations.objects.all()
+        if ordering_param_value == "usage":
+            qs = self.annotate_story_count(qs)
+
+        if search_param_value:
+            qs = qs.annotate(
+                location_search=Concat(
+                    F("country"),
+                    Value("^"),
+                    F("city"),
+                    Value("^"),
+                    F("province_1"),
+                    Value("^"),
+                    F("province_2"),
+                ),
+            )
+        return qs
 
 
 class StoryTagViewSet(ModelViewSet):
@@ -118,6 +142,31 @@ class StoryTagViewSet(ModelViewSet):
 
     filterset_class = TagFilter
     filter_backends = (filters.DjangoFilterBackend,)
+
+    def annotate_story_count(self, qs):
+        return qs.annotate(
+            story_count=Subquery(
+                story_models.StoryTags.objects.filter(
+                    id=OuterRef("pk"),
+                    story__is_draft=False,
+                ).values(
+                    "id",
+                ).annotate(
+                    count=Count("pk"),
+                ).values("count")
+            )
+        )
+
+    def get_queryset(self):
+        ordering_param_value = list(
+            reversed(self.request.query_params.get("ordering", "").split("-"))
+        )[0]
+
+        qs = story_models.StoryTags.objects.all()
+        if ordering_param_value == "usage":
+            qs = self.annotate_story_count(qs)
+
+        return qs
 
 
 class StoryViewSet(ModelViewSet):

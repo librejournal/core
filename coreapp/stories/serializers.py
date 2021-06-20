@@ -27,9 +27,22 @@ def _get_current_user_or_system_user_profile():
 
 
 class StoryTagsSerializer(serializers.ModelSerializer):
+    story_count = serializers.IntegerField(default=None)
+
     class Meta:
         model = models.StoryTags
-        fields = "__all__"
+        fields = [
+            "id",
+            "uuid",
+            "tag",
+            "created_by",
+            "story_count",
+        ]
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "uuid": {"read_only": True},
+            "created_by": {"required": False},
+        }
 
     def to_internal_value(self, data):
         internal = super().to_internal_value(data)
@@ -38,9 +51,20 @@ class StoryTagsSerializer(serializers.ModelSerializer):
 
 
 class StoryLocationSerializer(serializers.ModelSerializer):
+    story_count = serializers.IntegerField(default=None)
+
     class Meta:
         model = models.StoryLocations
-        fields = "__all__"
+        fields = [
+            "id",
+            "uuid",
+            "country",
+            "city",
+            "province_1",
+            "province_2",
+            "created_by",
+            "story_count",
+        ]
         extra_kwargs = {
             "city": {"required": False},
             "province_1": {"required": False},

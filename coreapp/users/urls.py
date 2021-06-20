@@ -54,7 +54,11 @@ logged_in_urls = [
 ]
 
 base_profiles_urls = [
-    path("search", profile_views.TinyProfileViewSet.as_view({"get":"list"}), name="list-profiles"),
+    path(
+        "search",
+        profile_views.TinyProfileViewSet.as_view({"get": "list"}),
+        name="list-profiles",
+    ),
     path(
         "follow", profile_views.FollowView.as_view(), name="follow-action-view"
     ),  # added to api spec

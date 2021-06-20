@@ -55,7 +55,10 @@ class UsersConfig(AppConfig):
         user.save()
 
     def _create_superuser_non_local(self):
-        from coreapp.users.management.commands.create_superuser import Command as SuperUserCommand
+        from coreapp.users.management.commands.create_superuser import (
+            Command as SuperUserCommand,
+        )
+
         SuperUserCommand().handle()
 
     def _create_superuser(self):
