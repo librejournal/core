@@ -13,9 +13,9 @@ class StoryFilter(filters.FilterSet):
             ("dislikes_count", "dislikes"),
         )
     )
-    components = CharFilter(field_name="components__text", lookup_expr="contains")
-    tags = CharFilter(field_name="tag_search", lookup_expr="contains")
-    locations = CharFilter(field_name="location_search", lookup_expr="contains")
+    components = CharFilter(field_name="components__text", lookup_expr="icontains")
+    tags = CharFilter(field_name="tag_search", lookup_expr="icontains")
+    locations = CharFilter(field_name="location_search", lookup_expr="icontains")
 
     class Meta:
         model = Story
@@ -38,12 +38,8 @@ class CommentFilter(filters.FilterSet):
 
 
 class TagFilter(filters.FilterSet):
-    search = CharFilter(field_name="tag", lookup_expr="contains")
-    ordering = OrderingFilter(
-        fields=(
-            ("story_count", "usage"),
-        )
-    )
+    search = CharFilter(field_name="tag", lookup_expr="icontains")
+    ordering = OrderingFilter(fields=(("story_count", "usage"),))
 
     class Meta:
         model = StoryTags
@@ -51,12 +47,8 @@ class TagFilter(filters.FilterSet):
 
 
 class LocationFilter(filters.FilterSet):
-    search = CharFilter(field_name="location_search", lookup_expr="contains")
-    ordering = OrderingFilter(
-        fields=(
-            ("story_count", "usage"),
-        )
-    )
+    search = CharFilter(field_name="location_search", lookup_expr="icontains")
+    ordering = OrderingFilter(fields=(("story_count", "usage"),))
 
     class Meta:
         model = StoryLocations

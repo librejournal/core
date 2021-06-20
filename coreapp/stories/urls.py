@@ -10,10 +10,28 @@ story_location_list_create = views.StoryLocationViewSet.as_view(
     }
 )
 
+story_location_detail = views.StoryLocationViewSet.as_view(
+    {
+        "get": "retrieve",
+        "patch": "partial_update",
+        "put": "update",
+        "delete": "destroy",
+    }
+)
+
 story_tag_list_create = views.StoryTagViewSet.as_view(
     {
         "get": "list",
         "post": "create",
+    }
+)
+
+story_tag_detail = views.StoryTagViewSet.as_view(
+    {
+        "get": "retrieve",
+        "patch": "partial_update",
+        "put": "update",
+        "delete": "destroy",
     }
 )
 
@@ -118,12 +136,22 @@ stories_root_urls_list = [
         name="profile-following-tags",
     ),
     path(
+        "tags/<int:id>",
+        story_tag_detail,
+        name="story-tag-detail",
+    ),
+    path(
         "locations", story_location_list_create, name="story-tag-list-create"
     ),  # added to api spec doc
     path(
         "locations/following",
         views.FollowedLocationsView.as_view(),
         name="profile-following-tags",
+    ),
+    path(
+        "locations/<int:id>",
+        story_location_detail,
+        name="story-location-detail",
     ),
     path("self", my_stories_list, name="my-stories-list"),  # added to api spec doc
     path("", story_list_create, name="story-list-create"),  # added to api spec doc

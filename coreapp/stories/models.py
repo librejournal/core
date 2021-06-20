@@ -160,6 +160,10 @@ class StoryTags(TimeStampedModel):
     )
 
     @property
+    def profile(self):
+        return self.created_by
+
+    @property
     def representation(self):
         return f"StoryTag(id={self.id}, tag={self.tag}, created_by_id={self.created_by_id})"
 
@@ -188,6 +192,10 @@ class StoryLocations(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    @property
+    def profile(self):
+        return self.created_by
 
     @property
     def representation(self):

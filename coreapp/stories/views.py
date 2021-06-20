@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from coreapp.stories import serializers as story_serializers
 from coreapp.stories import models as story_models
+from coreapp.stories.permissions import DetailViewActionObjectBelongsToProfile
 from coreapp.stories.view_mixins import (
     StoryMixin,
     LikeDislikeView,
@@ -99,11 +100,14 @@ class StoryLocationViewSet(ModelViewSet):
                 story_models.StoryLocations.objects.filter(
                     id=OuterRef("pk"),
                     story__is_draft=False,
-                ).values(
+                )
+                .values(
                     "id",
-                ).annotate(
+                )
+                .annotate(
                     count=Count("pk"),
-                ).values("count")
+                )
+                .values("count")
             )
         )
 
@@ -134,7 +138,10 @@ class StoryLocationViewSet(ModelViewSet):
 
 class StoryTagViewSet(ModelViewSet):
     serializer_class = story_serializers.StoryTagsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [
+        IsAuthenticated,
+        DetailViewActionObjectBelongsToProfile,
+    ]
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "id"
@@ -149,11 +156,14 @@ class StoryTagViewSet(ModelViewSet):
                 story_models.StoryTags.objects.filter(
                     id=OuterRef("pk"),
                     story__is_draft=False,
-                ).values(
+                )
+                .values(
                     "id",
-                ).annotate(
+                )
+                .annotate(
                     count=Count("pk"),
-                ).values("count")
+                )
+                .values("count")
             )
         )
 
