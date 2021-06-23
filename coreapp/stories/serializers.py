@@ -27,7 +27,7 @@ def _get_current_user_or_system_user_profile():
 
 
 class StoryTagsSerializer(serializers.ModelSerializer):
-    story_count = serializers.IntegerField(default=None)
+    story_count = serializers.IntegerField(default=None, read_only=True)
 
     class Meta:
         model = models.StoryTags
@@ -51,7 +51,7 @@ class StoryTagsSerializer(serializers.ModelSerializer):
 
 
 class StoryLocationSerializer(serializers.ModelSerializer):
-    story_count = serializers.IntegerField(default=None)
+    story_count = serializers.IntegerField(default=None, read_only=True)
 
     class Meta:
         model = models.StoryLocations
