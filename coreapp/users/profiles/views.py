@@ -237,7 +237,7 @@ class AcceptWriterInviteView(GenericAPIView, RequestUserProfileMixin):
 
 
 class ProfileReferralsViewSet(ModelViewSet, RequestUserProfileMixin):
-    authentication_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
     lookup_url_kwarg = "id"
