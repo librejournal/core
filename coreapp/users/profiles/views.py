@@ -1,4 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.db import transaction
 from django.db.models import F
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -225,6 +226,7 @@ class ProfileWithPkView(GenericProfileView):
 class AcceptWriterInviteView(GenericAPIView, RequestUserProfileMixin):
     permission_classes = [IsAuthenticated]
 
+    @transaction.atomic
     def post(self, *args, **kwargs):
         referral = get_object_or_404(
             ProfileReferrals, to_profile=self.profile, accepted=False
