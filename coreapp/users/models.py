@@ -131,6 +131,8 @@ class GenericToken(TimeStampedModel):
 
 
 class Profile(TimeStampedModel):
+    TYPE_CHOICES = PROFILE_TYPE_CHOICES
+
     uuid = models.UUIDField(unique=True, default=uuid.uuid4)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     type = models.CharField(

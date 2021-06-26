@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import F
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404, GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -261,10 +261,21 @@ class ProfileReferralsViewSet(ModelViewSet, RequestUserProfileMixin):
             return Response(
                 data="No more referrals left...", status=status.HTTP_403_FORBIDDEN
             )
+
+        # set some params
         request_data = {**request.data}
         request_data["referred_by"] = self.profile_id
         serializer = self.get_serializer(data=request_data)
         serializer.is_valid(raise_exception=True)
+
+        # to_profile needs to be a READER and has not yet recieved any referrals
+        # to be eligible for an invite...
+        to_profile = Profile.objects.filter(id=request_data['to_profile']).first()
+        to_profile_is_reader = to_profile and to_profile.type == Profile.TYPE_CHOICES.READER
+        referral_exists = ProfileReferrals.objects.filter(to_profile=to_profile).exists()
+        if not to_profile_is_reader or referral_exists:
+            raise PermissionDenied("Profile either is not READER or pending referral exists.")
+
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(status=status.HTTP_201_CREATED, headers=headers)
