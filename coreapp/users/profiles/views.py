@@ -129,6 +129,7 @@ class TinyProfileViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = TinyProfileSerializer
     pagination_class = CustomLimitOffsetPagination
+    queryset = Profile.objects.all()
 
     filterset_class = ProfileFilter
     filter_backends = (filters.DjangoFilterBackend,)

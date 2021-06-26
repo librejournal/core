@@ -41,7 +41,11 @@ STATICFILES_DIRS = (PROJECT_ROOT / "staticfiles",)
 SECRET_KEY = "django-insecure-rbvoas0kdcu-h0nyy0o5axjj20-%ueimcant=4zpe)z#7=7exc"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env_to_bool(os.environ.get("ALLOW_DEBUG", "false"))
+# DEBUG = env_to_bool(os.environ.get("ALLOW_DEBUG", "false"))
+if ENV == "local" or ENV == "docker_local":
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
