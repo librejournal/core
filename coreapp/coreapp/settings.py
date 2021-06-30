@@ -256,9 +256,14 @@ SENTRY_DSN = os.environ.get("SENTRY_DSN")
 if SENTRY_DSN:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.celery import CeleryIntegration
 
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         traces_sample_rate=1.0,
         send_default_pii=True,
+        integrations=[
+            DjangoIntegration(),
+            CeleryIntegration(),
+        ]
     )
