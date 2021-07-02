@@ -243,6 +243,8 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-pagination-offset",
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Accepts requests with this header as internal requests
 SERVICES = SERVICE_CONSTANTS
 THIS_SERVICE_ACCESS_TOKEN = SERVICES["core"]["access_token"]
