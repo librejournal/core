@@ -136,7 +136,6 @@ if ENV == "heroku":
 
     DATABASES["default"] = dj_database_url.parse(
         os.environ.get("HEROKU_DATABASE_URL"),
-        conn_max_age=600,
     )
 
 
