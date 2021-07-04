@@ -16,7 +16,9 @@ class StoryFilter(filters.FilterSet):
     components = CharFilter(field_name="components__text", lookup_expr="icontains")
     tags = CharFilter(field_name="tag_search", lookup_expr="icontains")
     locations = CharFilter(field_name="location_search", lookup_expr="icontains")
-    location_country = CharFilter(field_name="location__country", lookup_expr="icontains")
+    location_country = CharFilter(
+        field_name="location__country", lookup_expr="icontains"
+    )
     location_city = CharFilter(field_name="location__city", lookup_expr="icontains")
 
     class Meta:

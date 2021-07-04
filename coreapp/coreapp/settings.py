@@ -266,5 +266,5 @@ if SENTRY_DSN:
         integrations=[
             DjangoIntegration(),
             CeleryIntegration(),
-        ]
+        ],
     )

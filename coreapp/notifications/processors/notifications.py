@@ -154,7 +154,7 @@ class CommentLikeProcessor(GenericNotificationProcessor):
 
     def get_affected_queryset(self):
         comment = Comment.objects.get(id=self.relation_pk)
-        return [commentof.author]
+        return [comment.author]
 
     def get_followed_obj_id_list(self):
         return [self.relation_obj.id]

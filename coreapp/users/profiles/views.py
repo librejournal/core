@@ -270,11 +270,17 @@ class ProfileReferralsViewSet(ModelViewSet, RequestUserProfileMixin):
 
         # to_profile needs to be a READER and has not yet recieved any referrals
         # to be eligible for an invite...
-        to_profile = Profile.objects.filter(id=request_data['to_profile']).first()
-        to_profile_is_reader = to_profile and to_profile.type == Profile.TYPE_CHOICES.READER
-        referral_exists = ProfileReferrals.objects.filter(to_profile=to_profile).exists()
+        to_profile = Profile.objects.filter(id=request_data["to_profile"]).first()
+        to_profile_is_reader = (
+            to_profile and to_profile.type == Profile.TYPE_CHOICES.READER
+        )
+        referral_exists = ProfileReferrals.objects.filter(
+            to_profile=to_profile
+        ).exists()
         if not to_profile_is_reader or referral_exists:
-            raise PermissionDenied("Profile either is not READER or pending referral exists.")
+            raise PermissionDenied(
+                "Profile either is not READER or pending referral exists."
+            )
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
