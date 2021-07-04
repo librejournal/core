@@ -238,12 +238,12 @@ CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,
     "http://files:5000",
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-pagination-limit",
     "x-pagination-offset",
 ]
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 # Accepts requests with this header as internal requests
 SERVICES = SERVICE_CONSTANTS
