@@ -12,7 +12,7 @@ def run_new_story_notifications_processor_task(story_id):
     run_new_story_processors(story_id)
 
 
-@app.tasK()
+@app.task()
 def run_comment_like_processor_task(comment_id):
     CommentLikeProcessor(relation_pk=comment_id).process()
 

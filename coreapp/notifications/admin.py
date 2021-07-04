@@ -24,5 +24,6 @@ class StoryNotificationAdmin(admin.ModelAdmin):
     ]
 
 
-admin.site.register(CommentNotification, CommentNotificationAdmin)
-admin.site.register(StoryNotification, StoryNotificationAdmin)
+
+# admin.site.register(CommentNotification, CommentNotificationAdmin)
+# admin.site.register(StoryNotification, StoryNotificationAdmin)
