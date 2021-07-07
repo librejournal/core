@@ -150,7 +150,7 @@ class CommentLikeProcessor(GenericNotificationProcessor):
     notification_type = BaseNotification.NOTIFICATION_TYPES.COMMENT_LIKE
     relation_model = Comment
     relation_name = "comment"
-    reverse_relation_name = "commentnotification"
+    reverse_relation_name = "commentnotification__comment"
 
     def get_affected_queryset(self):
         comment = Comment.objects.get(id=self.relation_pk)
