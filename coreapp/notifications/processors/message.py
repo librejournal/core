@@ -1,3 +1,5 @@
+from django.utils.functional import cached_property
+
 class BaseNotificationMessage:
     def __init__(self, notification_object):
         self.notification = notification_object
@@ -19,6 +21,7 @@ class BaseNotificationMessage:
             "title": self.summary_title,
             "text": self.summary_text,
             "related_obj_pk": self.related_obj.pk,
+            "story_pk": self.story_pk,
             "notification_pk": self.notification.pk,
             "likes": getattr(self.related_obj, "like_count", None),
             "dislikes": getattr(self.related_obj, "dislike_count", None),
@@ -26,9 +29,13 @@ class BaseNotificationMessage:
 
 
 class StoryNotificationMessage(BaseNotificationMessage):
-    @property
+    @cached_property
     def related_obj(self):
         return self.notification.story
+
+    @property
+    def story_pk(self):
+        return self.related_obj.pk
 
     @property
     def summary_text(self):
@@ -40,9 +47,13 @@ class StoryNotificationMessage(BaseNotificationMessage):
 
 
 class CommentNotificationMessage(BaseNotificationMessage):
-    @property
+    @cached_property
     def related_obj(self):
         return self.notification.comment
+
+    @property
+    def story_pk(self):
+        return self.related_obj.story.pk
 
     @property
     def summary_text(self):
