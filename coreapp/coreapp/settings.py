@@ -238,6 +238,8 @@ CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,
     "http://files:5000",
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-pagination-limit",
     "x-pagination-offset",
@@ -264,5 +266,5 @@ if SENTRY_DSN:
         integrations=[
             DjangoIntegration(),
             CeleryIntegration(),
-        ]
+        ],
     )

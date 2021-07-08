@@ -303,11 +303,13 @@ class StoryLikes(TimeStampedModel):
         profile_stats.save()
 
     def save(self, *args, **kwargs):
-        from coreapp.notifications.processors.notifications import StoryLikeProcessor
+        from coreapp.notifications.tasks import run_story_like_processor_task
 
         super().save(*args, **kwargs)
+
+        # post-save actions
         self._update_profile_stats()
-        StoryLikeProcessor(relation_pk=self.story_id).process()
+        run_story_like_processor_task.delay(self.story_id)
 
 
 class CommentLikes(TimeStampedModel):
@@ -325,9 +327,10 @@ class CommentLikes(TimeStampedModel):
         profile_stats.save()
 
     def save(self, *args, **kwargs):
-        # from coreapp.notifications.processors.notifications import CommentLikeProcessor
+        from coreapp.notifications.tasks import run_comment_like_processor_task
 
         super().save(*args, **kwargs)
+
+        # post-save actions
         self._update_profile_stats()
-        # THERE IS A BUG RELATED TO THIS, DISABLE FOR NOW...
-        # CommentLikeProcessor(relation_pk=self.comment_id).process()
+        run_comment_like_processor_task.delay(comment_id=self.comment_id)

@@ -1,4 +1,8 @@
+from django.conf import settings
+
 from django.contrib.auth import logout, login, get_user_model
+from django.http import HttpResponseRedirect
+
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import GenericAPIView, get_object_or_404
@@ -13,7 +17,6 @@ from coreapp.users.utils import get_and_authenticate_user
 from coreapp.users.permissions import IsUserVerified
 from coreapp.users.verification.email import (
     build_password_reset_url,
-    send_simple_password_reset_with_url,
 )
 
 User = get_user_model()
@@ -54,7 +57,7 @@ class VerificationView(GenericAPIView):
         token = self.token
         user = token.user
         user.verify_user(token)
-        return Response(data={"is_verified": True}, status=status.HTTP_200_OK)
+        return HttpResponseRedirect(settings.FRONTEND_URL)
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

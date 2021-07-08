@@ -58,6 +58,6 @@ class CommentNotificationSerializer(serializers.ModelSerializer):
         return getattr(obj, "message_dict", {})
 
 
-class BulkReadUnreadActionSerializer(serializers.SerializerMethodField):
+class BulkReadUnreadActionSerializer(serializers.Serializer):
     id_list = serializers.ListField(child=serializers.IntegerField())
     action = serializers.ChoiceField(choices=["read", "unread"])

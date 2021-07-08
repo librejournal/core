@@ -1,6 +1,4 @@
 from coreapp.notifications.processors.notifications import (
-    StoryLikeProcessor,
-    CommentLikeProcessor,
     NewStoryByAuthorProcessor,
     NewStoryByLocationProcessor,
     NewStoryByTagProcessor,

@@ -58,7 +58,7 @@ class BulkReadUnreadActionView(GenericAPIView):
         to_update = []
         qs = BaseNotification.objects.filter(id__in=id_list)
         for notification in qs.iterator():
-            qs.is_read = True
+            notification.is_read = True
             to_update.append(notification)
         BaseNotification.objects.bulk_update(to_update, ["is_read"])
 
@@ -68,7 +68,7 @@ class BulkReadUnreadActionView(GenericAPIView):
         to_update = []
         qs = BaseNotification.objects.filter(id__in=id_list)
         for notification in qs.iterator():
-            qs.is_read = False
+            notification.is_read = False
             to_update.append(notification)
         BaseNotification.objects.bulk_update(to_update, ["is_read"])
 
