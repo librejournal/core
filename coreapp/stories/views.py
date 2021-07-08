@@ -180,7 +180,7 @@ class StoryTagViewSet(ModelViewSet):
 
 
 class StoryViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     # Implement pagination class
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
