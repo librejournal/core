@@ -125,9 +125,6 @@ class ProfileView(viewsets.GenericViewSet):
 
 
 class TinyProfileViewSet(viewsets.ModelViewSet):
-    permission_classes = [
-        IsAuthenticated,
-    ]
     serializer_class = TinyProfileSerializer
     pagination_class = CustomLimitOffsetPagination
     queryset = Profile.objects.all()
