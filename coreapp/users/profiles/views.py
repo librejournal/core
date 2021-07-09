@@ -239,7 +239,7 @@ class ProfileReferralsViewSet(ModelViewSet, RequestUserProfileMixin):
     permission_classes = [IsAuthenticated]
     pagination_class = CustomLimitOffsetPagination
     lookup_field = "id"
-    lookup_url_kwarg = "id"
+    lookup_url_kwarg = "pk"
 
     def get_serializer_class(self):
         if self.request.method == "GET":
